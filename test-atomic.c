@@ -22,7 +22,7 @@ void* func(void* nil)
 {
     int i;
 
-    for (i = 0; i < 100000; ++i) {
+    for (i = 0; i < 10000; ++i) {
 #ifdef USE_ASM
         atomic64_inc(&counter);
 #elif defined USE_MUTEX
@@ -43,9 +43,9 @@ void* func(void* nil)
     return NULL;
 }
 
-#define NR_THREAD 10000
+#define NR_THREAD 1000
 
-int main(void)
+static inline void test_inc(void)
 {
     int i;
     pthread_t pid[NR_THREAD];
@@ -65,6 +65,43 @@ int main(void)
 #else
     printf("result: %ld\n", counter);
 #endif
+}
+
+static inline void test_64_return(void)
+{
+    long old;
+    atomic64_t v = ATOMIC64_INIT(5);
+
+    printf("orig value = %ld\n", atomic64_read(&v));
+
+    old = xadd64(&v, 15);
+    printf("old value = %ld, new value = %ld\n", old, atomic64_read(&v));
+
+    old = xadd64(&v, -3);
+    printf("old value = %ld, new value = %ld\n", old, atomic64_read(&v));
+}
+
+static inline void test_return(void)
+{
+    int old;
+    atomic_t v = ATOMIC_INIT(5);
+
+    printf("orig value = %d\n", atomic_read(&v));
+
+    old = xadd(&v, 15);
+    printf("old value = %d, new value = %d\n", old, atomic_read(&v));
+
+    old = xadd(&v, -3);
+    printf("old value = %d, new value = %d\n", old, atomic_read(&v));
+}
+
+int main(void)
+{
+    test_inc();
+    printf("----------------------------\n");
+    test_return();
+    printf("----------------------------\n");
+    test_64_return();
 
     return 0;
 }
