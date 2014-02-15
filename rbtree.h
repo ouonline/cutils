@@ -6,9 +6,9 @@
 #include "utils.h"
 
 struct rb_node {
-    struct rb_node *left, *right;
     unsigned long parent_color;
-};
+    struct rb_node *left, *right;
+} __attribute__((aligned(sizeof(long))));
 
 struct rb_root {
     struct rb_node* node;

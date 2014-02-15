@@ -1,5 +1,7 @@
 CC := gcc
-CFLAGS := -Wall -g
+CFLAGS := -O2 -Wall -Werror
+
+OBJS := $(patsubst %.c, %.o, $(wildcard *.c))
 
 TARGET := rbtree-test atomic-test
 
@@ -9,14 +11,12 @@ all: $(TARGET)
 
 rbtree-test: test-rbtree.o rbtree.o
 	$(CC) $(CFLAGS) -o $@ $^
-rbtree.o: rbtree.c
-	$(CC) $(CFLAGS) -c $<
 
 atomic-test: test-atomic.o
 	$(CC) $(CFLAGS) -o $@ $^ -lpthread
 
 .c.o:
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(TARGET) *.o
+	rm -f $(TARGET) $(OBJS)
