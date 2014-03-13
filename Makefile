@@ -1,19 +1,27 @@
 CC := gcc
-CFLAGS := -O2 -Wall -Werror
+
+ifeq ($(release), y)
+    CFLAGS := -O2 -DNDEBUG
+else
+    CFLAGS := -g
+endif
+
+CFLAGS := $(CFLAGS) -Wall -Werror
+LIBS := -lpthread
 
 OBJS := $(patsubst %.c, %.o, $(wildcard *.c))
 
-TARGET := rbtree-test atomic-test
+TARGET := test_rbtree test_atomic
 
 .PHONY: all clean
 
 all: $(TARGET)
 
-rbtree-test: test-rbtree.o rbtree.o
+test_rbtree: test_rbtree.o rbtree.o
 	$(CC) $(CFLAGS) -o $@ $^
 
-atomic-test: test-atomic.o
-	$(CC) $(CFLAGS) -o $@ $^ -lpthread
+test_atomic: test_atomic.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@
