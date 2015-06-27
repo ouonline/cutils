@@ -144,8 +144,8 @@ void rb_insert_rebalance(struct rb_node* node, struct rb_root* root)
     rb_set_black(root->node);
 }
 
-int rb_insert(struct rb_node* node, struct rb_root* root,
-              int (*cmp_func)(struct rb_node*, struct rb_node*))
+struct rb_node* rb_insert(struct rb_node* node, struct rb_root* root,
+                          int (*cmp_func)(struct rb_node*, struct rb_node*))
 {
     struct rb_node *parent = NULL, **cursor = &root->node;
 
@@ -159,13 +159,13 @@ int rb_insert(struct rb_node* node, struct rb_root* root,
         else if (diff > 0)
             cursor = &parent->right;
         else
-            return -1;
+            return parent;
     }
 
     rb_link_node(node, parent, cursor);
     rb_insert_rebalance(node, root);
 
-    return 0;
+    return node;
 }
 
 static inline void rb_delete_rebalance(struct rb_node* node,
