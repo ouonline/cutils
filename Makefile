@@ -11,7 +11,7 @@ LIBS := -lpthread
 
 OBJS := $(patsubst %.c, %.o, $(wildcard *.c))
 
-TARGET := test_rbtree test_atomic
+TARGET := test_rbtree test_atomic test_str_util
 
 .PHONY: all clean
 
@@ -21,6 +21,9 @@ test_rbtree: test_rbtree.o rbtree.o
 	$(CC) $(CFLAGS) -o $@ $^
 
 test_atomic: test_atomic.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+test_str_util: test_str_util.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 .c.o:

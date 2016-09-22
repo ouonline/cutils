@@ -13,4 +13,8 @@
 #define container_of(ptr, type, member) \
     ((type*)((unsigned long)(ptr) - offset_of(type, member)))
 
+#ifndef NULL
+#define NULL (void*)0
+#endif
+
 #endif
