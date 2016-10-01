@@ -1,13 +1,13 @@
 #ifndef __STR_UTILS_H__
 #define __STR_UTILS_H__
 
-struct qstr_ref {
-    const char* str;
+struct qbuf_ref {
+    const char* base;
     unsigned int len;
 };
 
-struct qstr {
-    char* str;
+struct qbuf {
+    char* base;
     unsigned int len;
 };
 
