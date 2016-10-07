@@ -1,16 +1,6 @@
 #ifndef __STR_UTILS_H__
 #define __STR_UTILS_H__
 
-struct qbuf_ref {
-    const char* base;
-    unsigned int len;
-};
-
-struct qbuf {
-    char* base;
-    unsigned int len;
-};
-
 int hex2int(const char* src, int* dst);
 int hex2long(const char* src, long* dst);
 int bin2int(const char* src, int* dst);
