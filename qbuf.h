@@ -29,7 +29,7 @@ static inline void qbuf_destroy(struct qbuf* q) {
 static inline int qbuf_resize(struct qbuf* q, unsigned int newsize) {
     void* ptr = realloc(q->base, newsize);
     if (ptr) {
-        q->base = ptr;
+        q->base = (char*)ptr;
         q->len = newsize;
         return 0;
     }

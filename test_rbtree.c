@@ -36,7 +36,7 @@ int main(void)
 
     rb_init(&rbtree);
     for (i = 0; str[i]; ++i) {
-        struct rb_str* rs = malloc(sizeof(struct rb_str));
+        struct rb_str* rs = (struct rb_str*)malloc(sizeof(struct rb_str));
         rs->str = str[i];
         rb_insert(&rs->node, &rbtree, rb_strcmp);
         printf("------------------------------------------\n");
