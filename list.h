@@ -49,6 +49,16 @@ static inline void list_del(struct list_node* node)
     list_init(node);
 }
 
+static inline struct list_node* list_first(struct list_node* head)
+{
+    return head->next;
+}
+
+static inline struct list_node* list_last(struct list_node* head)
+{
+    return head->prev;
+}
+
 static inline struct list_node* list_next(struct list_node* node)
 {
     return node->next;
