@@ -32,11 +32,9 @@ static inline void qbuf_init(struct qbuf* q) {
 }
 
 static inline void qbuf_destroy(struct qbuf* q) {
-    q->__size__ = 0;
-    q->__capacity__ = 0;
     if (q->__base__) {
         free(q->__base__);
-        q->__base__ = NULL;
+        qbuf_init(q);
     }
 }
 
@@ -104,6 +102,12 @@ static inline int qbuf_append(struct qbuf* q, const void* data, unsigned int siz
 static inline int qbuf_assign(struct qbuf* q, const void* data, unsigned int size) {
     qbuf_clear(q);
     return qbuf_append(q, data, size);
+}
+
+static inline void qbuf_swap(struct qbuf* a, struct qbuf* b) {
+    struct qbuf tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 #endif

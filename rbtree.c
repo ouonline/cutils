@@ -16,8 +16,7 @@ static inline void rb_set_color(struct rb_node* node, int color)
     node->parent_color = (node->parent_color & ~1) | color;
 }
 
-#define rb_parent(node) \
-    ((struct rb_node*)((node)->parent_color & ~3))
+#define rb_parent(node) ((struct rb_node*)((node)->parent_color & ~3))
 
 static inline void rb_set_parent(struct rb_node* node, struct rb_node* parent)
 {
