@@ -1,36 +1,34 @@
 CC := gcc
+AR := ar
 
 ifeq ($(debug), y)
     CFLAGS := -g
 else
     CFLAGS := -O2 -DNDEBUG
 endif
+CFLAGS := $(CFLAGS) -Wall -Werror -Wextra -fPIC
 
-CFLAGS := $(CFLAGS) -Wall -Werror
-LIBS := -lpthread
+MODULE_NAME := utils
+
+INCLUDE :=
+LIBS :=
 
 OBJS := $(patsubst %.c, %.o, $(wildcard *.c))
 
-TARGET := test_rbtree test_atomic test_str_util test_hash
+TARGET := lib$(MODULE_NAME).a lib$(MODULE_NAME).so
 
 .PHONY: all clean
 
 all: $(TARGET)
 
-test_rbtree: test_rbtree.o rbtree.o
-	$(CC) $(CFLAGS) -o $@ $^
+lib$(MODULE_NAME).a: $(OBJS)
+	$(AR) rc $@ $^
 
-test_atomic: test_atomic.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
-
-test_str_util: test_str_util.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
-
-test_hash: test_hash.o hash.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+lib$(MODULE_NAME).so: $(OBJS)
+	$(CC) -shared -o $@ $^ $(LIBS)
 
 .c.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
 	rm -f $(TARGET) $(OBJS)

@@ -388,7 +388,7 @@ struct rb_node* rb_prev(struct rb_node* node)
     return parent;
 }
 
-static inline void rb_null_del(struct rb_node* node) {}
+static inline void rb_null_del(struct rb_node* nil) { (void)nil; }
 
 void rb_destroy(struct rb_root* root, void (*del_func)(struct rb_node*))
 {

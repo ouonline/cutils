@@ -80,9 +80,8 @@ static inline int qbuf_reserve(struct qbuf* q, unsigned int expected_size) {
 }
 
 static inline int qbuf_resize(struct qbuf* q, unsigned int expected_size) {
-    int err = qbuf_reserve(q, expected_size);
-    if (err) {
-        return err;
+    if (qbuf_reserve(q, expected_size) != 0) {
+        return -1;
     }
 
     q->__size__ = expected_size;
