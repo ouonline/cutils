@@ -11,10 +11,11 @@
 
 #define UPPER(size, n)  (((size) + ((n) - 1)) / (n))
 
-#define offset_of(type, member) \
-    ((unsigned long)(&(((type*)0)->member)))
+#ifndef offsetof
+#define offsetof(type, member) ((unsigned long)(&(((type*)0)->member)))
+#endif
 
 #define container_of(ptr, type, member) \
-    ((type*)((unsigned long)(ptr) - offset_of(type, member)))
+    ((type*)((unsigned long)(ptr) - offsetof(type, member)))
 
 #endif
