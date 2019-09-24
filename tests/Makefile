@@ -12,7 +12,7 @@ INCLUDE := -I..
 
 OBJS := $(patsubst %.c, %.o, $(wildcard *.c))
 
-TARGET := test_rbtree test_atomic test_str_util test_hash
+TARGET := test_rbtree test_str_util test_hash
 
 .PHONY: all clean pre-process post-clean
 
@@ -27,9 +27,6 @@ post-clean:
 	$(MAKE) clean -C ..
 
 test_rbtree: test_rbtree.o
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
-
-test_atomic: test_atomic.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 test_str_util: test_str_util.o
