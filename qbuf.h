@@ -5,14 +5,14 @@
 #include <string.h>
 
 struct qbuf { /* DONOT visit fileds directly */
-    char* __base__;
-    unsigned int __size__;
-    unsigned int __capacity__;
+    void* __base__;
+    unsigned long __size__;
+    unsigned long __capacity__;
 };
 
 struct qbuf_ref {
-    const char* base;
-    unsigned int size;
+    const void* base;
+    unsigned long size;
 };
 
 static inline void qbuf_ref_init(struct qbuf_ref* r) {
@@ -23,6 +23,12 @@ static inline void qbuf_ref_init(struct qbuf_ref* r) {
 static inline void qbuf_ref_destroy(struct qbuf_ref* r) {
     r->base = NULL;
     r->size = 0;
+}
+
+static inline void qbuf_ref_swap(struct qbuf_ref* a, struct qbuf_ref* b) {
+    struct qbuf_ref tmp = *a;
+    *a = *b;
+    *b = tmp;
 }
 
 static inline void qbuf_init(struct qbuf* q) {
@@ -38,7 +44,7 @@ static inline void qbuf_destroy(struct qbuf* q) {
     }
 }
 
-static inline unsigned int qbuf_size(const struct qbuf* q) {
+static inline unsigned long qbuf_size(const struct qbuf* q) {
     return q->__size__;
 }
 
@@ -54,11 +60,11 @@ static inline void qbuf_clear(struct qbuf* q) {
     q->__size__ = 0;
 }
 
-static inline int qbuf_reserve(struct qbuf* q, unsigned int expected_size) {
+static inline int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
     if (expected_size > q->__capacity__) {
-        unsigned int new_capacity;
+        unsigned long new_capacity;
         if (q->__capacity__ == 0) {
-            new_capacity = 16;
+            new_capacity = 4;
         } else {
             new_capacity = q->__capacity__;
         }
@@ -67,7 +73,7 @@ static inline int qbuf_reserve(struct qbuf* q, unsigned int expected_size) {
             new_capacity <<= 1;
         } while (new_capacity < expected_size);
 
-        char* new_base = (char*)realloc(q->__base__, new_capacity);
+        void* new_base = realloc(q->__base__, new_capacity);
         if (!new_base) {
             return -1;
         }
@@ -79,7 +85,7 @@ static inline int qbuf_reserve(struct qbuf* q, unsigned int expected_size) {
     return 0;
 }
 
-static inline int qbuf_resize(struct qbuf* q, unsigned int expected_size) {
+static inline int qbuf_resize(struct qbuf* q, unsigned long expected_size) {
     if (qbuf_reserve(q, expected_size) != 0) {
         return -1;
     }
@@ -88,17 +94,18 @@ static inline int qbuf_resize(struct qbuf* q, unsigned int expected_size) {
     return 0;
 }
 
-static inline int qbuf_append(struct qbuf* q, const void* data, unsigned int size) {
-    if (qbuf_reserve(q, q->__size__ + size) != 0) {
+static inline int qbuf_append(struct qbuf* q, const void* data, unsigned long size) {
+    const unsigned long new_size = q->__size__ + size;
+    if (qbuf_reserve(q, new_size) != 0) {
         return -1;
     }
 
     memcpy(q->__base__ + q->__size__, data, size);
-    q->__size__ += size;
+    q->__size__ = new_size;
     return 0;
 }
 
-static inline int qbuf_assign(struct qbuf* q, const void* data, unsigned int size) {
+static inline int qbuf_assign(struct qbuf* q, const void* data, unsigned long size) {
     qbuf_clear(q);
     return qbuf_append(q, data, size);
 }
