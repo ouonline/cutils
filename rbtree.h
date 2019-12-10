@@ -14,15 +14,14 @@ struct rb_root {
     struct rb_node* node;
 };
 
-#define DEF_RB_ROOT(r) struct rb_root r = {NULL}
+#define RB_ROOT_INITIALIZER {NULL}
 
 #define rb_init(root) ((root)->node = NULL)
 #define rb_empty(root) (!((root)->node))
 #define rb_entry(ptr, type, member) container_of(ptr, type, member)
 
 static inline void rb_link_node(struct rb_node* node, struct rb_node* parent,
-                                struct rb_node** link)
-{
+                                struct rb_node** link) {
     node->parent_color = (unsigned long)parent;
     node->left = node->right = NULL;
     *link = node;
