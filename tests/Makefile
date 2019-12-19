@@ -12,7 +12,7 @@ INCLUDE := -I..
 
 OBJS := $(patsubst %.c, %.o, $(wildcard *.c))
 
-TARGET := test_rbtree test_str_util test_hash
+TARGET := test_rbtree test_str_util test_hash test_bitmap
 
 .PHONY: all clean pre-process post-clean
 
@@ -33,6 +33,9 @@ test_str_util: test_str_util.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 test_hash: test_hash.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
+
+test_bitmap: test_bitmap.o
 	$(CC) $(CFLAGS) -o $@ $^ $(LIBS)
 
 .c.o:
