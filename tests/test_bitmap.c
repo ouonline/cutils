@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "bitmap.h"
+#include "utils/bitmap.h"
 
 #define N 3
 

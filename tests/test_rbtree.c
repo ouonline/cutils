@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "rbtree.h"
+#include "utils/rbtree.h"
 
 struct rb_str {
     const char* str;

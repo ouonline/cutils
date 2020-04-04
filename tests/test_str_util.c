@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "str_utils.c"
+#include "utils/str_utils.c"
 
 int main(void)
 {
@@ -16,4 +16,3 @@ int main(void)
 
     return 0;
 }
-
