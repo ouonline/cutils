@@ -5,17 +5,22 @@
 #define RB_RED    0
 #define RB_BLACK  1
 
-#define rb_color(node)              ((node)->parent_color & 1)
 #define rb_is_red(node)             (!rb_color(node))
 #define rb_is_black(node)           rb_color(node)
 #define rb_set_red(node)            ((node)->parent_color &= ~1)
 #define rb_set_black(node)          ((node)->parent_color |= 1)
 
+static inline int rb_color(const struct rb_node* node) {
+    return node->parent_color & 1;
+}
+
 static inline void rb_set_color(struct rb_node* node, int color) {
     node->parent_color = (node->parent_color & ~1) | color;
 }
 
-#define rb_parent(node) ((struct rb_node*)((node)->parent_color & ~3))
+static inline struct rb_node* rb_parent(const struct rb_node* node) {
+    return (struct rb_node*)(node->parent_color & ~3);
+}
 
 static inline void rb_set_parent(struct rb_node* node, struct rb_node* parent) {
     node->parent_color = (node->parent_color & 3) | (unsigned long)parent;
@@ -81,8 +86,7 @@ static void rb_rotate_right(struct rb_node* x, struct rb_root* root) {
     rb_set_parent(x, y);
 }
 
-void rb_insert_rebalance(struct rb_node* node, struct rb_root* root)
-{
+void rb_insert_rebalance(struct rb_node* node, struct rb_root* root) {
     struct rb_node *parent, *gparent, *uncle;
 
     while ((parent = rb_parent(node)) && rb_is_red(parent)) {
@@ -316,12 +320,10 @@ struct rb_node* rb_root(struct rb_node* node) {
 
 struct rb_node* rb_first(struct rb_root* root) {
     struct rb_node* n = root->node;
-    if (!n) {
-        return NULL;
-    }
-
-    while (n->left) {
-        n = n->left;
+    if (n) {
+        while (n->left) {
+            n = n->left;
+        }
     }
 
     return n;
@@ -329,12 +331,10 @@ struct rb_node* rb_first(struct rb_root* root) {
 
 struct rb_node* rb_last(struct rb_root* root) {
     struct rb_node* n = root->node;
-    if (!n) {
-        return NULL;
-    }
-
-    while (n->right) {
-        n = n->right;
+    if (n) {
+        while (n->right) {
+            n = n->right;
+        }
     }
 
     return n;
@@ -355,8 +355,10 @@ struct rb_node* rb_next(struct rb_node* node) {
         return node;
     }
 
-    while ((parent = rb_parent(node)) && (node == parent->right)) {
+    parent = rb_parent(node);
+    while (parent && node == parent->right) {
         node = parent;
+        parent = rb_parent(node);
     }
 
     return parent;
@@ -377,8 +379,10 @@ struct rb_node* rb_prev(struct rb_node* node) {
         return node;
     }
 
-    while ((parent = rb_parent(node)) && (node == parent->left)) {
+    parent = rb_parent(node);
+    while (parent && node == parent->left) {
         node = parent;
+        parent = rb_parent(node);
     }
 
     return parent;

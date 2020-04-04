@@ -5,13 +5,18 @@
 extern "C" {
 #endif
 
-#include <time.h>
+#include <stdint.h>
 
-unsigned long str2gmtime(const char* time_str);
-void gmtime2str(unsigned long timeval, void* buf, int buflen);
+uint64_t str2gmtime(const char* time_str);
+char* gmtime2str(uint64_t timeval, char* buf);
 
-/* buf size >= 27, tp can be NULL */
-void current_datetime(char buf[27], struct tm* tp);
+static inline uint64_t bjtime2gmtime(uint64_t ts) {
+    return ts - 28800;
+}
+
+static inline uint64_t gmtime2bjtime(uint64_t ts) {
+    return ts + 28800;
+}
 
 #ifdef __cplusplus
 }

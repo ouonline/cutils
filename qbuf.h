@@ -100,7 +100,7 @@ static inline int qbuf_append(struct qbuf* q, const void* data, unsigned long si
         return -1;
     }
 
-    memcpy(q->__base__ + q->__size__, data, size);
+    memcpy((char*)(q->__base__) + q->__size__, data, size);
     q->__size__ = new_size;
     return 0;
 }
