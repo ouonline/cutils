@@ -8,7 +8,7 @@ else
 	CFLAGS += -O2 -DNDEBUG
 endif
 
-TARGET := test_time_utils test_bitmap test_hash test_str_util test_rbtree
+TARGET := test_time_utils test_hash test_bitmap test_str_utils test_rbtree
 
 .PHONY: all clean
 
@@ -19,65 +19,65 @@ all: $(TARGET)
 omake_phony_0:
 	$(MAKE) debug=$(debug) libutils_static.a -C ..
 
-test_time_utils_INCLUDE := -I../..
+omake_dep_4_INCLUDE := -I../..
 
-test_time_utils.c.test_time_utils.o: test_time_utils.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(test_time_utils_INCLUDE) -c $< -o $@
+test_time_utils.c.omake_dep_4.o: test_time_utils.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_4_INCLUDE) -c $< -o $@
 
-test_time_utils_OBJS := test_time_utils.c.test_time_utils.o
+test_time_utils_OBJS := test_time_utils.c.omake_dep_4.o
 
 test_time_utils_LIBS := ../libutils_static.a
 
 test_time_utils: $(test_time_utils_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -o $@ $^ $(test_time_utils_LIBS)
+	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_time_utils_LIBS)
 
-test_bitmap_INCLUDE := -I../..
+omake_dep_2_INCLUDE := -I../..
 
-test_bitmap.c.test_bitmap.o: test_bitmap.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(test_bitmap_INCLUDE) -c $< -o $@
+test_hash.c.omake_dep_2.o: test_hash.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_2_INCLUDE) -c $< -o $@
 
-test_bitmap_OBJS := test_bitmap.c.test_bitmap.o
-
-test_bitmap_LIBS := ../libutils_static.a
-
-test_bitmap: $(test_bitmap_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -o $@ $^ $(test_bitmap_LIBS)
-
-test_hash_INCLUDE := -I../..
-
-test_hash.c.test_hash.o: test_hash.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(test_hash_INCLUDE) -c $< -o $@
-
-test_hash_OBJS := test_hash.c.test_hash.o
+test_hash_OBJS := test_hash.c.omake_dep_2.o
 
 test_hash_LIBS := ../libutils_static.a
 
 test_hash: $(test_hash_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -o $@ $^ $(test_hash_LIBS)
+	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_hash_LIBS)
 
-test_str_util_INCLUDE := -I../..
+omake_dep_3_INCLUDE := -I../..
 
-test_str_util.c.test_str_util.o: test_str_util.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(test_str_util_INCLUDE) -c $< -o $@
+test_bitmap.c.omake_dep_3.o: test_bitmap.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_3_INCLUDE) -c $< -o $@
 
-test_str_util_OBJS := test_str_util.c.test_str_util.o
+test_bitmap_OBJS := test_bitmap.c.omake_dep_3.o
 
-test_str_util_LIBS := ../libutils_static.a
+test_bitmap_LIBS := ../libutils_static.a
 
-test_str_util: $(test_str_util_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -o $@ $^ $(test_str_util_LIBS)
+test_bitmap: $(test_bitmap_OBJS) | omake_phony_0
+	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_bitmap_LIBS)
 
-test_rbtree_INCLUDE := -I../..
+omake_dep_1_INCLUDE := -I../..
 
-test_rbtree.c.test_rbtree.o: test_rbtree.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(test_rbtree_INCLUDE) -c $< -o $@
+test_str_utils.c.omake_dep_1.o: test_str_utils.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_1_INCLUDE) -c $< -o $@
 
-test_rbtree_OBJS := test_rbtree.c.test_rbtree.o
+test_str_utils_OBJS := test_str_utils.c.omake_dep_1.o
+
+test_str_utils_LIBS := ../libutils_static.a
+
+test_str_utils: $(test_str_utils_OBJS) | omake_phony_0
+	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_str_utils_LIBS)
+
+omake_dep_0_INCLUDE := -I../..
+
+test_rbtree.c.omake_dep_0.o: test_rbtree.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_0_INCLUDE) -c $< -o $@
+
+test_rbtree_OBJS := test_rbtree.c.omake_dep_0.o
 
 test_rbtree_LIBS := ../libutils_static.a
 
 test_rbtree: $(test_rbtree_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -o $@ $^ $(test_rbtree_LIBS)
+	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_rbtree_LIBS)
 
 clean:
-	rm -f $(TARGET) $(test_time_utils_OBJS) $(test_bitmap_OBJS) $(test_hash_OBJS) $(test_str_util_OBJS) $(test_rbtree_OBJS)
+	rm -f $(TARGET) $(test_time_utils_OBJS) $(test_hash_OBJS) $(test_bitmap_OBJS) $(test_str_utils_OBJS) $(test_rbtree_OBJS)

@@ -31,7 +31,7 @@ str_utils.c.omake_dep_0.o: str_utils.c
 utils_shared_OBJS := rbtree.c.omake_dep_0.o time_utils.c.omake_dep_0.o hash.c.omake_dep_0.o str_utils.c.omake_dep_0.o
 
 libutils_shared.so: $(utils_shared_OBJS)
-	$(CC) $(CFLAGS) -shared -o $@ $^
+	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -shared -o $@ $^
 
 utils_static_OBJS := rbtree.c.omake_dep_0.o time_utils.c.omake_dep_0.o hash.c.omake_dep_0.o str_utils.c.omake_dep_0.o
 
