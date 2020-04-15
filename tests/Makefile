@@ -10,74 +10,77 @@ endif
 
 TARGET := test_time_utils test_hash test_bitmap test_str_utils test_rbtree
 
-.PHONY: all clean
+.PHONY: all clean distclean
 
 all: $(TARGET)
 
 .PHONY: omake_phony_0
-
 omake_phony_0:
 	$(MAKE) debug=$(debug) libutils_static.a -C ..
 
 omake_dep_4_INCLUDE := -I../..
 
-test_time_utils.c.omake_dep_4.o: test_time_utils.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_4_INCLUDE) -c $< -o $@
+omake_dep_4.test_time_utils.c.o: test_time_utils.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra $(omake_dep_4_INCLUDE) -c $< -o $@
 
-test_time_utils_OBJS := test_time_utils.c.omake_dep_4.o
+test_time_utils_OBJS := omake_dep_4.test_time_utils.c.o
 
 test_time_utils_LIBS := ../libutils_static.a
 
 test_time_utils: $(test_time_utils_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_time_utils_LIBS)
+	$(CC) $(CFLAGS) -Wextra -Werror -Wall -o $@ $^ $(test_time_utils_LIBS)
 
 omake_dep_2_INCLUDE := -I../..
 
-test_hash.c.omake_dep_2.o: test_hash.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_2_INCLUDE) -c $< -o $@
+omake_dep_2.test_hash.c.o: test_hash.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra $(omake_dep_2_INCLUDE) -c $< -o $@
 
-test_hash_OBJS := test_hash.c.omake_dep_2.o
+test_hash_OBJS := omake_dep_2.test_hash.c.o
 
 test_hash_LIBS := ../libutils_static.a
 
 test_hash: $(test_hash_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_hash_LIBS)
+	$(CC) $(CFLAGS) -Wextra -Werror -Wall -o $@ $^ $(test_hash_LIBS)
 
 omake_dep_3_INCLUDE := -I../..
 
-test_bitmap.c.omake_dep_3.o: test_bitmap.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_3_INCLUDE) -c $< -o $@
+omake_dep_3.test_bitmap.c.o: test_bitmap.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra $(omake_dep_3_INCLUDE) -c $< -o $@
 
-test_bitmap_OBJS := test_bitmap.c.omake_dep_3.o
+test_bitmap_OBJS := omake_dep_3.test_bitmap.c.o
 
 test_bitmap_LIBS := ../libutils_static.a
 
 test_bitmap: $(test_bitmap_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_bitmap_LIBS)
+	$(CC) $(CFLAGS) -Wextra -Werror -Wall -o $@ $^ $(test_bitmap_LIBS)
 
 omake_dep_1_INCLUDE := -I../..
 
-test_str_utils.c.omake_dep_1.o: test_str_utils.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_1_INCLUDE) -c $< -o $@
+omake_dep_1.test_str_utils.c.o: test_str_utils.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra $(omake_dep_1_INCLUDE) -c $< -o $@
 
-test_str_utils_OBJS := test_str_utils.c.omake_dep_1.o
+test_str_utils_OBJS := omake_dep_1.test_str_utils.c.o
 
 test_str_utils_LIBS := ../libutils_static.a
 
 test_str_utils: $(test_str_utils_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_str_utils_LIBS)
+	$(CC) $(CFLAGS) -Wextra -Werror -Wall -o $@ $^ $(test_str_utils_LIBS)
 
 omake_dep_0_INCLUDE := -I../..
 
-test_rbtree.c.omake_dep_0.o: test_rbtree.c
-	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC $(omake_dep_0_INCLUDE) -c $< -o $@
+omake_dep_0.test_rbtree.c.o: test_rbtree.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra $(omake_dep_0_INCLUDE) -c $< -o $@
 
-test_rbtree_OBJS := test_rbtree.c.omake_dep_0.o
+test_rbtree_OBJS := omake_dep_0.test_rbtree.c.o
 
 test_rbtree_LIBS := ../libutils_static.a
 
 test_rbtree: $(test_rbtree_OBJS) | omake_phony_0
-	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -o $@ $^ $(test_rbtree_LIBS)
+	$(CC) $(CFLAGS) -Wextra -Werror -Wall -o $@ $^ $(test_rbtree_LIBS)
 
 clean:
 	rm -f $(TARGET) $(test_time_utils_OBJS) $(test_hash_OBJS) $(test_bitmap_OBJS) $(test_str_utils_OBJS) $(test_rbtree_OBJS)
+
+distclean:
+	$(MAKE) clean
+	$(MAKE) distclean -C ..

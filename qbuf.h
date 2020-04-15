@@ -1,6 +1,10 @@
 #ifndef __QBUF_H__
 #define __QBUF_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -14,6 +18,11 @@ struct qbuf_ref {
     const void* base;
     unsigned long size;
 };
+
+#ifdef __cplusplus
+typedef struct qbuf QBuf;
+typedef struct qbuf_ref QBufRef;
+#endif
 
 static inline void qbuf_ref_init(struct qbuf_ref* r) {
     r->base = NULL;
@@ -115,5 +124,9 @@ static inline void qbuf_swap(struct qbuf* a, struct qbuf* b) {
     *a = *b;
     *b = tmp;
 }
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

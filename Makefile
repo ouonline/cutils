@@ -12,31 +12,34 @@ AR := ar
 
 TARGET := libutils_shared.so libutils_static.a
 
-.PHONY: all clean
+.PHONY: all clean distclean
 
 all: $(TARGET)
 
-rbtree.c.omake_dep_0.o: rbtree.c
+omake_dep_0.rbtree.c.o: rbtree.c
 	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -c $< -o $@
 
-time_utils.c.omake_dep_0.o: time_utils.c
+omake_dep_0.time_utils.c.o: time_utils.c
 	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -c $< -o $@
 
-hash.c.omake_dep_0.o: hash.c
+omake_dep_0.hash.c.o: hash.c
 	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -c $< -o $@
 
-str_utils.c.omake_dep_0.o: str_utils.c
+omake_dep_0.str_utils.c.o: str_utils.c
 	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -c $< -o $@
 
-utils_shared_OBJS := rbtree.c.omake_dep_0.o time_utils.c.omake_dep_0.o hash.c.omake_dep_0.o str_utils.c.omake_dep_0.o
+utils_shared_OBJS := omake_dep_0.str_utils.c.o omake_dep_0.hash.c.o omake_dep_0.time_utils.c.o omake_dep_0.rbtree.c.o
 
 libutils_shared.so: $(utils_shared_OBJS)
 	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -shared -o $@ $^
 
-utils_static_OBJS := rbtree.c.omake_dep_0.o time_utils.c.omake_dep_0.o hash.c.omake_dep_0.o str_utils.c.omake_dep_0.o
+utils_static_OBJS := omake_dep_0.str_utils.c.o omake_dep_0.hash.c.o omake_dep_0.time_utils.c.o omake_dep_0.rbtree.c.o
 
 libutils_static.a: $(utils_static_OBJS)
 	$(AR) rc $@ $^
 
 clean:
 	rm -f $(TARGET) $(utils_shared_OBJS) $(utils_static_OBJS)
+
+distclean:
+	$(MAKE) clean
