@@ -1,5 +1,5 @@
-#ifndef __UTILS_H__
-#define __UTILS_H__
+#ifndef __UTILS_UTILS_H__
+#define __UTILS_UTILS_H__
 
 #ifndef NULL
 #define NULL 0

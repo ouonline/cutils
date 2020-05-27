@@ -1,5 +1,5 @@
-#ifndef __STR_UTILS_H__
-#define __STR_UTILS_H__
+#ifndef __UTILS_STR_UTILS_H__
+#define __UTILS_STR_UTILS_H__
 
 #ifdef __cplusplus
 extern "C" {

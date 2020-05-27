@@ -1,5 +1,5 @@
-#ifndef __LIST_H__
-#define __LIST_H__
+#ifndef __UTILS_LIST_H__
+#define __UTILS_LIST_H__
 
 /* doubly-linked list operations from linux kernel */
 

@@ -1,5 +1,5 @@
-#ifndef __BITMAP_H__
-#define __BITMAP_H__
+#ifndef __UTILS_BITMAP_H__
+#define __UTILS_BITMAP_H__
 
 #include "utils.h"
 

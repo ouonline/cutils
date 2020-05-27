@@ -1,5 +1,5 @@
-#ifndef __HLIST_H__
-#define __HLIST_H__
+#ifndef __UTILS_HLIST_H__
+#define __UTILS_HLIST_H__
 
 /* hash list from linux kernel */
 

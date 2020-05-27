@@ -1,5 +1,5 @@
-#ifndef __QBUF_H__
-#define __QBUF_H__
+#ifndef __UTILS_QBUF_H__
+#define __UTILS_QBUF_H__
 
 #ifdef __cplusplus
 extern "C" {
