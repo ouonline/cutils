@@ -6,8 +6,8 @@ static struct {
     const char* name;
     unsigned long (*func)(const char*, unsigned int);
 } hash_func_table[] = {
-    {"simple_hash11",   simple_hash11},
-    {"simple_hash31",   simple_hash31},
+    {"simple_hash11",   hash11},
+    {"simple_hash31",   hash31},
     {"djb_hash",        djb_hash},
     {"sdbm_hash",       sdbm_hash},
     {"dek_hash",        dek_hash},

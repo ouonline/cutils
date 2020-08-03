@@ -16,6 +16,9 @@ TARGET := libutils_shared.so libutils_static.a
 
 all: $(TARGET)
 
+omake_dep_0.qbuf.c.o: qbuf.c
+	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -c $< -o $@
+
 omake_dep_0.rbtree.c.o: rbtree.c
 	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -c $< -o $@
 
@@ -28,12 +31,12 @@ omake_dep_0.hash.c.o: hash.c
 omake_dep_0.str_utils.c.o: str_utils.c
 	$(CC) $(CFLAGS) -Wall -Werror -Wextra -fPIC -c $< -o $@
 
-utils_shared_OBJS := omake_dep_0.str_utils.c.o omake_dep_0.hash.c.o omake_dep_0.time_utils.c.o omake_dep_0.rbtree.c.o
+utils_shared_OBJS := omake_dep_0.str_utils.c.o omake_dep_0.hash.c.o omake_dep_0.time_utils.c.o omake_dep_0.rbtree.c.o omake_dep_0.qbuf.c.o
 
 libutils_shared.so: $(utils_shared_OBJS)
 	$(CC) $(CFLAGS) -fPIC -Wextra -Werror -Wall -shared -o $@ $^
 
-utils_static_OBJS := omake_dep_0.str_utils.c.o omake_dep_0.hash.c.o omake_dep_0.time_utils.c.o omake_dep_0.rbtree.c.o
+utils_static_OBJS := omake_dep_0.str_utils.c.o omake_dep_0.hash.c.o omake_dep_0.time_utils.c.o omake_dep_0.rbtree.c.o omake_dep_0.qbuf.c.o
 
 libutils_static.a: $(utils_static_OBJS)
 	$(AR) rc $@ $^

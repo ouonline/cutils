@@ -1,21 +1,33 @@
 #ifndef __UTILS_UTILS_H__
 #define __UTILS_UTILS_H__
 
-#ifndef NULL
-#define NULL 0
+#include <stdint.h>
+
+#ifdef __cplusplus
+namespace outils {
 #endif
 
-#define IS2EXP(n)    (((n) > 0) ? (!((n) & ((n) - 1))) : 0)
+static inline int is2exp(uint64_t n) {
+    return ((n > 0) ? (!(n & (n - 1))) : 0);
+}
 
-#define ALIGN(n, align) (((n) + (align) - 1) & (~((align) - 1)))
+static inline uint64_t align(uint64_t n, uint32_t alignment) {
+    return ((n + alignment - 1) & (~(alignment - 1)));
+}
 
-#define UPPER(size, n)  (((size) + ((n) - 1)) / (n))
+static inline uint64_t upper(uint64_t size, uint64_t n) {
+    return ((size + n - 1) / n);
+}
 
 #ifndef offsetof
 #define offsetof(type, member) ((unsigned long)(&(((type*)0)->member)))
 #endif
 
-#define container_of(ptr, type, member) \
+#define container_of(ptr, type, member)                         \
     ((type*)((unsigned long)(ptr) - offsetof(type, member)))
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
