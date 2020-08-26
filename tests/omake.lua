@@ -1,33 +1,35 @@
-project = CreateProject()
+project = Project()
+
+flags = {"-Wall", "-Werror", "-Wextra"}
 
 project:CreateBinary("test_rbtree"):AddDependencies(
     project:CreateDependency()
-        :AddFlags("-Wall", "-Werror", "-Wextra")
+        :AddFlags(flags)
         :AddSourceFiles("test_rbtree.c")
-        :AddStaticLibrary("..", "utils_static"))
+        :AddStaticLibraries("..", "utils_static"))
 
 project:CreateBinary("test_str_utils"):AddDependencies(
     project:CreateDependency()
-        :AddFlags("-Wall", "-Werror", "-Wextra")
+        :AddFlags(flags)
         :AddSourceFiles("test_str_utils.c")
-        :AddStaticLibrary("..", "utils_static"))
+        :AddStaticLibraries("..", "utils_static"))
 
 project:CreateBinary("test_hash"):AddDependencies(
     project:CreateDependency()
-        :AddFlags("-Wall", "-Werror", "-Wextra")
+        :AddFlags(flags)
         :AddSourceFiles("test_hash.c")
-        :AddStaticLibrary("..", "utils_static"))
+        :AddStaticLibraries("..", "utils_static"))
 
 project:CreateBinary("test_bitmap"):AddDependencies(
     project:CreateDependency()
-        :AddFlags("-Wall", "-Werror", "-Wextra")
+        :AddFlags(flags)
         :AddSourceFiles("test_bitmap.c")
-        :AddStaticLibrary("..", "utils_static"))
+        :AddStaticLibraries("..", "utils_static"))
 
 project:CreateBinary("test_time_utils"):AddDependencies(
     project:CreateDependency()
-        :AddFlags("-Wall", "-Werror", "-Wextra")
+        :AddFlags(flags)
         :AddSourceFiles("test_time_utils.c")
-        :AddStaticLibrary("..", "utils_static"))
+        :AddStaticLibraries("..", "utils_static"))
 
 return project
