@@ -26,6 +26,23 @@ static const char* rb_content(struct rb_node* node)
     return buf;
 }
 
+static void __rb_print(struct rb_node *root, int space, int pos,
+                       const char* (*content)(struct rb_node*)) {
+    if (root) {
+        int i;
+        for (i = 0; i < space; ++i)
+            printf(" ");
+        printf("%s\t%d\n", content(root), pos);
+        space += 3;
+        __rb_print(root->left, space, 1, content);
+        __rb_print(root->right, space, -1, content);
+    }
+}
+
+void rb_print(struct rb_root* root, const char* (*content)(struct rb_node*)) {
+    __rb_print(root->node, 0, 0, content);
+}
+
 int main(void)
 {
     int i;

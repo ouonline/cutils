@@ -1,5 +1,3 @@
-#include <stdio.h>
-
 #include "rbtree.h"
 
 #define RB_RED    0
@@ -417,24 +415,4 @@ void rb_destroy(struct rb_root* root, void (*del_func)(struct rb_node*)) {
     }
 
     root->node = NULL;
-}
-
-/*---------------------------------------------------------------------------*/
-
-static void __rb_print(struct rb_node *root, int space, int pos,
-                       const char* (*content)(struct rb_node*)) {
-    if (root) {
-        int i;
-        for (i = 0; i < space; ++i)
-            printf(" ");
-        printf("%s\t%d\t%s\n", content(root), pos,
-               rb_is_black(root) ? "BLACK" : "RED");
-        space += 3;
-        __rb_print(root->left, space, 1, content);
-        __rb_print(root->right, space, -1, content);
-    }
-}
-
-void rb_print(struct rb_root* root, const char* (*content)(struct rb_node*)) {
-    __rb_print(root->node, 0, 0, content);
 }

@@ -41,6 +41,4 @@ struct rb_node* rb_next(struct rb_node* node);
 struct rb_node* rb_prev(struct rb_node* node);
 void rb_destroy(struct rb_root* root, void (*del_func)(struct rb_node*));
 
-void rb_print(struct rb_root*, const char* (*to_string)(struct rb_node*));
-
 #endif
