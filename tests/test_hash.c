@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "utils/hash.h"
+#include "cutils/hash.h"
 
 static struct {
     const char* name;
