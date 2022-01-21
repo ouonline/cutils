@@ -48,3 +48,11 @@ char* gmtime2str(uint64_t ts, char* buf) {
             tm.tm_hour, tm.tm_min, tm.tm_sec);
     return buf;
 }
+
+uint64_t diff_time_usec(struct timeval end, const struct timeval* begin) {
+    if (end.tv_usec < begin->tv_usec) {
+        --end.tv_sec;
+        end.tv_usec += 1000000;
+    }
+    return (end.tv_sec - begin->tv_sec) * 1000000 + (end.tv_usec - begin->tv_usec);
+}
