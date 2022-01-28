@@ -56,3 +56,18 @@ uint64_t diff_time_usec(struct timeval end, const struct timeval* begin) {
     }
     return (end.tv_sec - begin->tv_sec) * 1000000 + (end.tv_usec - begin->tv_usec);
 }
+
+void current_datetime(char buf[], struct tm* tp) {
+    int len;
+    struct timeval tv;
+    struct tm ltm;
+
+    if (!tp) {
+        tp = &ltm;
+    }
+
+    gettimeofday(&tv, NULL);
+    localtime_r(&tv.tv_sec, tp);
+    len = strftime(buf, 27, "%F %T", tp);
+    sprintf((char*)buf + len, ".%06ld", tv.tv_usec);
+}
