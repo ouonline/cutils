@@ -5,7 +5,7 @@
 #include <stddef.h> // offsetof
 
 #ifdef __cplusplus
-namespace outils {
+namespace cutils {
 #endif
 
 static inline int is2exp(uint64_t n) {
