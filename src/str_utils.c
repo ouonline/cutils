@@ -1,4 +1,5 @@
 #include <ctype.h>
+#include <string.h>
 
 static int hex_value[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 0 - 15 */
@@ -11,130 +12,67 @@ static int hex_value[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 112 - 127 */
 };
 
-int ndec2int(const char* src, unsigned int len, int* dst) {
-    unsigned int i;
-    int result = 0;
+long ndec2long(const char* src, unsigned int len) {
+    long result = 0;
 
-    for (i = 0; i < len; ++i) {
-        if (!isdigit(src[i])) {
-            return -1;
+    unsigned int i = 0;
+    for (; i < len; ++i) {
+        if (!isspace(src[i])) {
+            break;
         }
-
+    }
+    for (; i < len; ++i) {
+        if (!isdigit(src[i])) {
+            return result;
+        }
         result = result * 10 + (src[i] - '0');
     }
 
-    *dst = result;
-    return 0;
+    return result;
 }
 
-int ndec2long(const char* src, unsigned int len, long* dst) {
-    unsigned int i;
-    int result = 0;
-
-    for (i = 0; i < len; ++i) {
-        if (!isdigit(src[i])) {
-            return -1;
-        }
-
-        result = result * 10 + (src[i] - '0');
-    }
-
-    *dst = result;
-    return 0;
+long dec2long(const char* src) {
+    return ndec2long(src, strlen(src));
 }
 
-int hex2int(const char* src, int* dst) {
-    unsigned int i;
-    int result = 0;
-
-    for (i = 0; src[i]; ++i) {
-        if (!isxdigit(src[i])) {
-            return -1;
-        }
-
-        result = (result << 4) + hex_value[(int)(src[i])];
-    }
-
-    *dst = result;
-    return 0;
-}
-
-int nhex2int(const char* src, unsigned int len, int* dst) {
-    unsigned int i;
-    int result = 0;
-
-    for (i = 0; i < len; ++i) {
-        if (!isxdigit(src[i])) {
-            return -1;
-        }
-
-        result = (result << 4) + hex_value[(int)(src[i])];
-    }
-
-    *dst = result;
-    return 0;
-}
-
-int hex2long(const char* src, long* dst) {
-    unsigned int i;
+long nhex2long(const char* src, unsigned int len) {
     long result = 0;
 
-    for (i = 0; src[i]; ++i) {
-        if (!isxdigit(src[i])) {
-            return -1;
+    unsigned int i = 0;
+    for (; i < len; ++i) {
+        if (!isspace(src[i])) {
+            break;
         }
-
-        result = (result << 4) + hex_value[(int)(src[i])];
     }
-
-    *dst = result;
-    return 0;
-}
-
-int nhex2long(const char* src, unsigned int len, long* dst) {
-    unsigned int i;
-    long result = 0;
-
     for (i = 0; i < len; ++i) {
         if (!isxdigit(src[i])) {
-            return -1;
+            return result;
         }
-
         result = (result << 4) + hex_value[(int)(src[i])];
     }
 
-    *dst = result;
-    return 0;
+    return result;
 }
 
-int bin2int(const char* src, int* dst) {
-    unsigned int i;
-    int result = 0;
+long hex2long(const char* src) {
+    return nhex2long(src, strlen(src));
+}
 
+long bin2long(const char* src) {
+    long result = 0;
+
+    unsigned int i;
     for (i = 0; src[i]; ++i) {
+        if (!isspace(src[i])) {
+            break;
+        }
+    }
+    for (; src[i]; ++i) {
         if (src[i] != '0' && src[i] != '1') {
-            return -1;
+            return result;
         }
-
         result = (result << 1) + (src[i] - '0');
     }
 
-    *dst = result;
-    return 0;
-}
-
-int bin2long(const char* src, long* dst) {
-    unsigned int i;
-    long result = 0;
-
-    for (i = 0; src[i]; ++i) {
-        if (src[i] != '0' && src[i] != '1') {
-            return -1;
-        }
-
-        result = (result << 1) + (src[i] - '0');
-    }
-
-    *dst = result;
-    return 0;
+    return result;
 }

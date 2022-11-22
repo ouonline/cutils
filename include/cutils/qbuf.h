@@ -34,6 +34,7 @@ void qbuf_clear(struct qbuf* q);
 int qbuf_reserve(struct qbuf* q, unsigned long expected_size);
 int qbuf_resize(struct qbuf* q, unsigned long expected_size);
 int qbuf_append(struct qbuf* q, const void* data, unsigned long size);
+int qbuf_append_c(struct qbuf* q, char c);
 int qbuf_assign(struct qbuf* q, const void* data, unsigned long size);
 void qbuf_swap(struct qbuf* a, struct qbuf* b);
 

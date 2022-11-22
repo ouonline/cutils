@@ -92,6 +92,17 @@ int qbuf_append(struct qbuf* q, const void* data, unsigned long size) {
     return 0;
 }
 
+int qbuf_append_c(struct qbuf* q, char c) {
+    const unsigned long new_size = q->__size__ + 1;
+    if (qbuf_reserve(q, new_size) != 0) {
+        return -1;
+    }
+
+    *((char*)q->__base__ + q->__size__) = c;
+    q->__size__ = new_size;
+    return 0;
+}
+
 int qbuf_assign(struct qbuf* q, const void* data, unsigned long size) {
     qbuf_clear(q);
     return qbuf_append(q, data, size);

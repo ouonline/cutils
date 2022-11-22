@@ -5,15 +5,13 @@
 extern "C" {
 #endif
 
-int hex2int(const char* src, int* dst);
-int hex2long(const char* src, long* dst);
-int bin2int(const char* src, int* dst);
-int bin2long(const char* src, long* dst);
+long dec2long(const char* src);
+long ndec2long(const char* src, unsigned int len);
 
-int ndec2int(const char* src, unsigned int len, int* dst);
-int nhex2int(const char* src, unsigned int len, int* dst);
-int ndec2long(const char* src, unsigned int len, long* dst);
-int nhex2long(const char* src, unsigned int len, long* dst);
+long bin2long(const char* src);
+
+long hex2long(const char* src);
+long nhex2long(const char* src, unsigned int len);
 
 #ifdef __cplusplus
 }
