@@ -1,5 +1,5 @@
-#ifndef __UTILS_QBUF_H__
-#define __UTILS_QBUF_H__
+#ifndef __CUTILS_QBUF_H__
+#define __CUTILS_QBUF_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,19 +11,9 @@ struct qbuf { /* DONOT visit fileds directly */
     unsigned long __capacity__;
 };
 
-struct qbuf_ref {
-    const void* base;
-    unsigned long size;
-};
-
 #ifdef __cplusplus
 typedef struct qbuf QBuf;
-typedef struct qbuf_ref QBufRef;
 #endif
-
-void qbuf_ref_init(struct qbuf_ref* r);
-void qbuf_ref_destroy(struct qbuf_ref* r);
-void qbuf_ref_swap(struct qbuf_ref* a, struct qbuf_ref* b);
 
 void qbuf_init(struct qbuf* q);
 void qbuf_destroy(struct qbuf* q);

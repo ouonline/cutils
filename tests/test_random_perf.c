@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include "test_utils.h"
+#include "cutils/time_utils.h"
 #include "cutils/random/mt19937_32.h"
 #include "cutils/random/mt19937_64.h"
 #include "cutils/random/xorshift32.h"
@@ -9,17 +10,6 @@
 #include "cutils/random/xoshiro256ss.h"
 
 #define LOOPS 5555555
-
-static inline uint64_t DiffTimeUsec(const struct timeval* end,
-                                    const struct timeval* begin) {
-    struct timeval tmp = *end;
-    if (tmp.tv_usec < begin->tv_usec) {
-        --tmp.tv_sec;
-        tmp.tv_usec += 1000000;
-    }
-    return (tmp.tv_sec - begin->tv_sec) * 1000000 +
-        (tmp.tv_usec - begin->tv_usec);
-}
 
 static void test_rand() {
     srand(31415926);
@@ -30,7 +20,7 @@ static void test_rand() {
         rand();
     }
     gettimeofday(&end, NULL);
-    printf("rand() cost %f ms.\n", DiffTimeUsec(&end, &begin) / 1000.0);
+    printf("rand() cost %f ms.\n", diff_time_usec(end, &begin) / 1000.0);
 }
 
 static void test_xorshift32() {
@@ -43,7 +33,7 @@ static void test_xorshift32() {
         xorshift32_next(&st);
     }
     gettimeofday(&end, NULL);
-    printf("xorshift32 cost %f ms.\n", DiffTimeUsec(&end, &begin) / 1000.0);
+    printf("xorshift32 cost %f ms.\n", diff_time_usec(end, &begin) / 1000.0);
 }
 
 static void test_xorshift64() {
@@ -56,7 +46,7 @@ static void test_xorshift64() {
         xorshift64_next(&st);
     }
     gettimeofday(&end, NULL);
-    printf("xorshift64 cost %f ms.\n", DiffTimeUsec(&end, &begin) / 1000.0);
+    printf("xorshift64 cost %f ms.\n", diff_time_usec(end, &begin) / 1000.0);
 }
 
 static void test_splitmix64() {
@@ -69,7 +59,7 @@ static void test_splitmix64() {
         splitmix64_next(&st);
     }
     gettimeofday(&end, NULL);
-    printf("splitmix64 cost %f ms.\n", DiffTimeUsec(&end, &begin) / 1000.0);
+    printf("splitmix64 cost %f ms.\n", diff_time_usec(end, &begin) / 1000.0);
 }
 
 static void test_xoshiro256ss() {
@@ -82,7 +72,7 @@ static void test_xoshiro256ss() {
         xoshiro256ss_next(&st);
     }
     gettimeofday(&end, NULL);
-    printf("xoshiro256ss cost %f ms.\n", DiffTimeUsec(&end, &begin) / 1000.0);
+    printf("xoshiro256ss cost %f ms.\n", diff_time_usec(end, &begin) / 1000.0);
 }
 
 static void test_mt19937_32() {
@@ -95,7 +85,7 @@ static void test_mt19937_32() {
         mt19937_next32(&st);
     }
     gettimeofday(&end, NULL);
-    printf("mt19937_32 cost %f ms.\n", DiffTimeUsec(&end, &begin) / 1000.0);
+    printf("mt19937_32 cost %f ms.\n", diff_time_usec(end, &begin) / 1000.0);
 }
 
 static void test_mt19937_64() {
@@ -108,7 +98,7 @@ static void test_mt19937_64() {
         mt19937_next64(&st);
     }
     gettimeofday(&end, NULL);
-    printf("mt19937_64 cost %f ms.\n", DiffTimeUsec(&end, &begin) / 1000.0);
+    printf("mt19937_64 cost %f ms.\n", diff_time_usec(end, &begin) / 1000.0);
 }
 
 int main(void) {

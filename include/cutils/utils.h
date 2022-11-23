@@ -1,5 +1,5 @@
-#ifndef __UTILS_UTILS_H__
-#define __UTILS_UTILS_H__
+#ifndef __CUTILS_UTILS_H__
+#define __CUTILS_UTILS_H__
 
 #include <stdint.h>
 #include <stddef.h> // offsetof

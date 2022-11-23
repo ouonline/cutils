@@ -2,22 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-void qbuf_ref_init(struct qbuf_ref* r) {
-    r->base = NULL;
-    r->size = 0;
-}
-
-void qbuf_ref_destroy(struct qbuf_ref* r) {
-    r->base = NULL;
-    r->size = 0;
-}
-
-void qbuf_ref_swap(struct qbuf_ref* a, struct qbuf_ref* b) {
-    struct qbuf_ref tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
-
 void qbuf_init(struct qbuf* q) {
     q->__base__ = NULL;
     q->__size__ = 0;
