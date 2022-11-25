@@ -16,6 +16,9 @@ target_link_libraries(test_mt19937 PRIVATE cutils_static)
 add_executable(test_random_perf test_random_perf.c)
 target_link_libraries(test_random_perf PRIVATE cutils_static)
 
+add_executable(test_str_utils test_str_utils.c)
+target_link_libraries(test_str_utils PRIVATE cutils_static)
+
 # -------------------------------------------------------------------------- #
 
 include(FetchContent)

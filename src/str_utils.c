@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
@@ -13,22 +14,36 @@ static int hex_value[] = {
 };
 
 long ndec2long(const char* src, unsigned int len) {
-    long result = 0;
-
     unsigned int i = 0;
     for (; i < len; ++i) {
         if (!isspace(src[i])) {
             break;
         }
     }
+    if (i == len) {
+        return 0;
+    }
+
+    int is_negative = 0;
+    if (src[i] == '-') {
+        is_negative = 1;
+        ++i;
+    } else if (src[i] == '+') {
+        ++i;
+    } else if (!isdigit(src[i])) {
+        return 0;
+    }
+
+    long result = 0;
+
     for (; i < len; ++i) {
         if (!isdigit(src[i])) {
-            return result;
+            break;
         }
         result = result * 10 + (src[i] - '0');
     }
 
-    return result;
+    return (is_negative) ? -result : result;
 }
 
 long dec2long(const char* src) {

@@ -5,7 +5,7 @@ struct robin_hood_hash_meta {
     unsigned int data_num;
     unsigned int lpsl;
     unsigned int max_data_num;
-    unsigned int table_size;
+    unsigned int slot_num;
 };
 
 struct robin_hood_hash_node {
@@ -31,7 +31,7 @@ struct robin_hood_hash {
 #define ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR 0.9
 
 /* returns 0 if success. */
-int robin_hood_hash_init(struct robin_hood_hash*, unsigned int max_data_num, float max_load_factor,
+int robin_hood_hash_init(struct robin_hood_hash*, unsigned int slot_num, float max_load_factor,
                          const struct robin_hood_hash_operations* ops);
 
 /* returns pointer to data, or NULL if not found */

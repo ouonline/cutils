@@ -10,11 +10,11 @@ static int slot_is_empty(const struct robin_hood_hash_node* node) {
     return (node->psl == UINT_MAX);
 }
 
-int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int max_data_num, float max_load_factor,
+int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int slot_num, float max_load_factor,
                          const struct robin_hood_hash_operations* ops) {
-    unsigned int table_size = max_data_num / max_load_factor;
+    unsigned int max_data_num = slot_num * max_load_factor;
 
-    h->table = (struct robin_hood_hash_node*)malloc(table_size * sizeof(struct robin_hood_hash_node));
+    h->table = (struct robin_hood_hash_node*)malloc(slot_num * sizeof(struct robin_hood_hash_node));
     if (!h->table) {
         return 1;
     }
@@ -23,9 +23,9 @@ int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int max_data_num, f
     h->meta.data_num = 0;
     h->meta.lpsl = 0;
     h->meta.max_data_num = max_data_num;
-    h->meta.table_size = table_size;
+    h->meta.slot_num = slot_num;
 
-    for (unsigned int i = 0; i < table_size; ++i) {
+    for (unsigned int i = 0; i < slot_num; ++i) {
         mark_slot_empty(&h->table[i]);
     }
 
@@ -33,7 +33,7 @@ int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int max_data_num, f
 }
 
 static unsigned int do_lookup(const struct robin_hood_hash* h, const void* key) {
-    unsigned int slot = h->ops->hash(key) % h->meta.table_size;
+    unsigned int slot = h->ops->hash(key) % h->meta.slot_num;
 
     for (unsigned int psl = 0; psl <= h->meta.lpsl; ++psl) {
         if (slot_is_empty(&h->table[slot]) || psl > h->table[slot].psl) {
@@ -45,7 +45,7 @@ static unsigned int do_lookup(const struct robin_hood_hash* h, const void* key) 
             return slot;
         }
 
-        slot = (slot + 1) % h->meta.table_size;
+        slot = (slot + 1) % h->meta.slot_num;
     }
 
     return UINT_MAX;
@@ -70,7 +70,7 @@ void* robin_hood_hash_insert(struct robin_hood_hash* h, void* data) {
 
     struct robin_hood_hash_node* table = h->table;
     const void* key = h->ops->getkey(data);
-    unsigned int slot = h->ops->hash(key) % meta->table_size;
+    unsigned int slot = h->ops->hash(key) % meta->slot_num;
 
     struct robin_hood_hash_node tmp_node;
     tmp_node.psl = 0;
@@ -103,7 +103,7 @@ void* robin_hood_hash_insert(struct robin_hood_hash* h, void* data) {
         }
 
         ++tmp_node.psl;
-        slot = (slot + 1) % meta->table_size;
+        slot = (slot + 1) % meta->slot_num;
     }
 
     return NULL;
@@ -118,12 +118,12 @@ void* robin_hood_hash_remove(struct robin_hood_hash* h, const void* key) {
     void* ret = h->table[slot].data;
     --h->meta.data_num;
 
-    unsigned int next_slot = (slot + 1) % h->meta.table_size;
+    unsigned int next_slot = (slot + 1) % h->meta.slot_num;
     while (!slot_is_empty(&h->table[next_slot]) && h->table[next_slot].psl > 0) {
         h->table[slot] = h->table[next_slot];
         --h->table[slot].psl;
         slot = next_slot;
-        next_slot = (next_slot + 1) % h->meta.table_size;
+        next_slot = (next_slot + 1) % h->meta.slot_num;
     }
 
     mark_slot_empty(&h->table[slot]);
