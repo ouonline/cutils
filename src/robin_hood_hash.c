@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "cutils/robin_hood_hash.h"
 #include <stdlib.h>
 #include <limits.h>

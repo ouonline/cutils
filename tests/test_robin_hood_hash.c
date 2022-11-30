@@ -48,7 +48,17 @@ static void test_lookup(struct robin_hood_hash* h, char** data) {
         assert(robin_hood_hash_lookup(h, data[i - 1]) != NULL);
     }
     gettimeofday(&end, NULL);
-    printf("find [%u] costs %lf ms.\n", N, diff_time_usec(end, &begin) / 1000);
+    printf("find [%u] costs %lf ms.\n", N, (double)diff_time_usec(end, &begin) / 1000);
+}
+
+static void test_remove(struct robin_hood_hash* h, char** data) {
+    for (unsigned int i = N; i > 0; --i) {
+        if (robin_hood_hash_lookup(h, data[i - 1]) == NULL) {
+            continue; /* duplicate items */
+        }
+        assert(robin_hood_hash_remove(h, data[i - 1]) != NULL);
+    }
+    printf("test remove ok\n");
 }
 
 int main(void) {
@@ -56,10 +66,11 @@ int main(void) {
     char** data = gen_random_str(N);
 
     struct robin_hood_hash h;
-    robin_hood_hash_init(&h, N, ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR, &g_ops);
+    robin_hood_hash_init(&h, N * 2, ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR, &g_ops);
 
     test_insert(&h, data);
     test_lookup(&h, data);
+    test_remove(&h, data);
 
     robin_hood_hash_destroy(&h);
     return 0;
