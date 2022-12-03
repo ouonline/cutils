@@ -25,6 +25,7 @@ int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int slot_num, float
     h->meta.lpsl = 0;
     h->meta.max_data_num = max_data_num;
     h->meta.slot_num = slot_num;
+    h->meta.max_load_factor = max_load_factor;
 
     for (unsigned int i = 0; i < slot_num; ++i) {
         mark_slot_empty(&h->table[i]);
@@ -57,16 +58,53 @@ void* robin_hood_hash_lookup(struct robin_hood_hash* h, const void* key) {
     return (slot == UINT_MAX) ? NULL : h->table[slot].data;
 }
 
+void robin_hood_hash_foreach(struct robin_hood_hash* h, void* arg_for_callback,
+                             void (*f)(void* data, void* arg)) {
+    for (unsigned int i = 0; i < h->meta.slot_num; ++i) {
+        if (slot_is_empty(&h->table[i])) {
+            continue;
+        }
+
+        f(h->table[i].data, arg_for_callback);
+    }
+}
+
 static void swap_node(struct robin_hood_hash_node* a, struct robin_hood_hash_node* b) {
     struct robin_hood_hash_node tmp = *a;
     *a = *b;
     *b = tmp;
 }
 
+static void rehash_callback(void* data, void* arg) {
+    struct robin_hood_hash* new_hash = (struct robin_hood_hash*)arg;
+    robin_hood_hash_insert(new_hash, arg);
+}
+
+/* TODO optimize */
+static int rehash(struct robin_hood_hash* h) {
+    unsigned int new_slot_num = h->meta.slot_num * 2;
+
+    struct robin_hood_hash new_hash;
+    int err = robin_hood_hash_init(&new_hash, new_slot_num, h->meta.max_load_factor, h->ops);
+    if (err) {
+        return err;
+    }
+
+    robin_hood_hash_foreach(h, &new_hash, rehash_callback);
+
+    struct robin_hood_hash tmp = *h;
+    *h = new_hash;
+    robin_hood_hash_destroy(&tmp);
+    return 0;
+}
+
 void* robin_hood_hash_insert(struct robin_hood_hash* h, void* data) {
     struct robin_hood_hash_meta* meta = &h->meta;
     if (meta->data_num >= meta->max_data_num) {
-        return NULL;
+        int err = rehash(h);
+        if (err) {
+            return NULL;
+        }
     }
 
     struct robin_hood_hash_node* table = h->table;

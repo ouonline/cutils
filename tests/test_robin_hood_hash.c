@@ -34,7 +34,7 @@ static void test_insert(struct robin_hood_hash* h, char** data) {
     struct timeval begin, end;
     gettimeofday(&begin, NULL);
     for (unsigned int i = 0; i < N; ++i) {
-        void* ret = robin_hood_hash_insert(h, data[i]);
+        robin_hood_hash_insert(h, data[i]);
     }
     gettimeofday(&end, NULL);
     printf("insert ends...\ninserting [%u]([%u] valid) strings costs [%lf] ms.\n",
@@ -61,6 +61,17 @@ static void test_remove(struct robin_hood_hash* h, char** data) {
     printf("test remove ok\n");
 }
 
+static void test_rehash(char** data) {
+    struct robin_hood_hash h;
+    robin_hood_hash_init(&h, 10, ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR, &g_ops);
+
+    for (unsigned i = 0; i < N; ++i) {
+        assert(robin_hood_hash_insert(&h, data[i]) != NULL);
+    }
+
+    printf("test rehash ok\n");
+}
+
 int main(void) {
     printf("begin generating test data...\n");
     char** data = gen_random_str(N);
@@ -73,5 +84,8 @@ int main(void) {
     test_remove(&h, data);
 
     robin_hood_hash_destroy(&h);
+
+    test_rehash(data);
+
     return 0;
 }

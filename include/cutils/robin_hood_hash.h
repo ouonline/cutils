@@ -6,6 +6,7 @@ struct robin_hood_hash_meta {
     unsigned int lpsl;
     unsigned int max_data_num;
     unsigned int slot_num;
+    float max_load_factor; /* for rehash */
 };
 
 struct robin_hood_hash_node {
@@ -31,15 +32,19 @@ struct robin_hood_hash {
 #define ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR 0.9
 
 /* returns 0 if success. */
-int robin_hood_hash_init(struct robin_hood_hash*, unsigned int slot_num, float max_load_factor,
+int robin_hood_hash_init(struct robin_hood_hash*, unsigned int init_slot_num, float max_load_factor,
                          const struct robin_hood_hash_operations* ops);
 
 /* returns pointer to data, or NULL if not found */
 void* robin_hood_hash_lookup(struct robin_hood_hash*, const void* key);
 
+/* iterates each data in hash table. */
+void robin_hood_hash_foreach(struct robin_hood_hash*, void* arg_for_callback,
+                             void (*f)(void* data, void* arg));
+
 /*
-  returns the newly inserted data or the existed data, or NULL if `max_load_factor` is reached,
-  because rehashing is not implemented currently.
+  returns the newly inserted data or the existed data, or NULL if `max_load_factor` is reached
+  and rehash fails.
 */
 void* robin_hood_hash_insert(struct robin_hood_hash*, void* data);
 
