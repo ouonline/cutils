@@ -15,22 +15,6 @@ void qbuf_destroy(struct qbuf* q) {
     }
 }
 
-unsigned long qbuf_size(const struct qbuf* q) {
-    return q->__size__;
-}
-
-void* qbuf_data(const struct qbuf* q) {
-    return q->__base__;
-}
-
-int qbuf_empty(const struct qbuf* q) {
-    return (q->__size__ == 0);
-}
-
-void qbuf_clear(struct qbuf* q) {
-    q->__size__ = 0;
-}
-
 int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
     if (expected_size > q->__capacity__) {
         unsigned long new_capacity;
@@ -85,15 +69,4 @@ int qbuf_append_c(struct qbuf* q, char c) {
     *((char*)q->__base__ + q->__size__) = c;
     q->__size__ = new_size;
     return 0;
-}
-
-int qbuf_assign(struct qbuf* q, const void* data, unsigned long size) {
-    qbuf_clear(q);
-    return qbuf_append(q, data, size);
-}
-
-void qbuf_swap(struct qbuf* a, struct qbuf* b) {
-    struct qbuf tmp = *a;
-    *a = *b;
-    *b = tmp;
 }

@@ -17,16 +17,37 @@ typedef struct qbuf QBuf;
 
 void qbuf_init(struct qbuf* q);
 void qbuf_destroy(struct qbuf* q);
-unsigned long qbuf_size(const struct qbuf* q);
-void* qbuf_data(const struct qbuf* q);
-int qbuf_empty(const struct qbuf* q);
-void qbuf_clear(struct qbuf* q);
 int qbuf_reserve(struct qbuf* q, unsigned long expected_size);
 int qbuf_resize(struct qbuf* q, unsigned long expected_size);
 int qbuf_append(struct qbuf* q, const void* data, unsigned long size);
 int qbuf_append_c(struct qbuf* q, char c);
-int qbuf_assign(struct qbuf* q, const void* data, unsigned long size);
-void qbuf_swap(struct qbuf* a, struct qbuf* b);
+
+static inline void qbuf_clear(struct qbuf* q) {
+    q->__size__ = 0;
+}
+
+static inline int qbuf_assign(struct qbuf* q, const void* data, unsigned long size) {
+    qbuf_clear(q);
+    return qbuf_append(q, data, size);
+}
+
+static inline void* qbuf_data(const struct qbuf* q) {
+    return q->__base__;
+}
+
+static inline unsigned long qbuf_size(const struct qbuf* q) {
+    return q->__size__;
+}
+
+static inline int qbuf_empty(const struct qbuf* q) {
+    return (q->__size__ == 0);
+}
+
+static inline void qbuf_swap(struct qbuf* a, struct qbuf* b) {
+    struct qbuf tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
 
 #ifdef __cplusplus
 }
