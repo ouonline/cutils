@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 struct qbuf { /* DONOT visit fileds directly */
-    void* __base__;
     unsigned long __size__;
+    void* __base__;
     unsigned long __capacity__;
 };
 
@@ -17,10 +17,15 @@ typedef struct qbuf QBuf;
 
 void qbuf_init(struct qbuf* q);
 void qbuf_destroy(struct qbuf* q);
+
 int qbuf_reserve(struct qbuf* q, unsigned long expected_size);
 int qbuf_resize(struct qbuf* q, unsigned long expected_size);
+
 int qbuf_append(struct qbuf* q, const void* data, unsigned long size);
 int qbuf_append_c(struct qbuf* q, char c);
+
+void qbuf_swap(struct qbuf* a, struct qbuf* b);
+void qbuf_move(struct qbuf* src, struct qbuf* dst);
 
 static inline void qbuf_clear(struct qbuf* q) {
     q->__size__ = 0;
@@ -41,12 +46,6 @@ static inline unsigned long qbuf_size(const struct qbuf* q) {
 
 static inline int qbuf_empty(const struct qbuf* q) {
     return (q->__size__ == 0);
-}
-
-static inline void qbuf_swap(struct qbuf* a, struct qbuf* b) {
-    struct qbuf tmp = *a;
-    *a = *b;
-    *b = tmp;
 }
 
 #ifdef __cplusplus
