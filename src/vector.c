@@ -10,14 +10,18 @@ int vector_push_back(struct vector* vec, const void* item) {
     return qbuf_append(&vec->buf, item, vec->sizeof_item);
 }
 
-void* vector_pop_back(struct vector* vec) {
+int vector_pop_back(struct vector* vec, void* item) {
     if (qbuf_empty(&vec->buf)) {
-        return NULL;
+        return -1;
     }
 
     unsigned long new_size = qbuf_size(&vec->buf) - vec->sizeof_item;
+    if (item) {
+        memcpy(item, (char*)qbuf_data(&vec->buf) + new_size, vec->sizeof_item);
+    }
+
     qbuf_resize(&vec->buf, new_size);
-    return (char*)qbuf_data(&vec->buf) + new_size;
+    return 0;
 }
 
 void vector_destroy(struct vector* vec, void* arg, void (*destructor)(void* item, void* arg)) {

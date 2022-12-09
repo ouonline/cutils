@@ -5,8 +5,8 @@
 #define MAX_INLINE_SIZE sizeof(unsigned long)
 
 void qbuf_init(struct qbuf* q) {
-    q->__size__ = 0;
     q->__base__ = &q->__capacity__;
+    q->__size__ = 0;
 }
 
 void qbuf_destroy(struct qbuf* q) {
@@ -119,12 +119,20 @@ void qbuf_swap(struct qbuf* a, struct qbuf* b) {
 void qbuf_move(struct qbuf* src, struct qbuf* dst) {
     qbuf_destroy(dst);
     if (src->__base__ == &src->__capacity__) {
+        dst->__base__ = &dst->__capacity__;
         dst->__size__ = src->__size__;
         dst->__capacity__ = src->__capacity__;
-        dst->__base__ = &dst->__capacity__;
         src->__size__ = 0;
     } else {
         *dst = *src;
         qbuf_init(src);
     }
+}
+
+int qbuf_equal(const struct qbuf* a, const struct qbuf* b) {
+    if (a->__size__ != b->__size__) {
+        return 0;
+    }
+
+    return (memcmp(a->__base__, b->__base__, a->__size__) == 0);
 }

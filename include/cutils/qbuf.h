@@ -6,8 +6,8 @@ extern "C" {
 #endif
 
 struct qbuf { /* DONOT visit fileds directly */
-    unsigned long __size__;
     void* __base__;
+    unsigned long __size__;
     unsigned long __capacity__;
 };
 
@@ -46,6 +46,15 @@ static inline unsigned long qbuf_size(const struct qbuf* q) {
 
 static inline int qbuf_empty(const struct qbuf* q) {
     return (q->__size__ == 0);
+}
+
+/* returns 1 if equal, 0 otherwise. */
+int qbuf_equal(const struct qbuf* a, const struct qbuf* b);
+
+#include "qbuf_ref.h"
+
+static inline struct qbuf_ref* qbuf_get_ref(const struct qbuf* q) {
+    return (struct qbuf_ref*)q;
 }
 
 #ifdef __cplusplus

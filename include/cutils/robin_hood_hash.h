@@ -17,7 +17,7 @@ struct robin_hood_hash_node {
 struct robin_hood_hash_operations {
     /* gets key from the given data */
     const void* (*getkey)(const void* data);
-    /* returns non-zero means equal */
+    /* returns 1 if equal, 0 otherwise */
     int (*equal)(const void* akey, const void* bkey);
     /* calc the hash value of the given key */
     unsigned long (*hash)(const void* key);
