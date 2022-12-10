@@ -15,7 +15,7 @@ static const void* default_getkey(const void* data) {
 }
 
 static int default_equal(const void* a, const void* b) {
-    return (strcmp(a, b) == 0);
+    return strcmp(a, b);
 }
 
 static unsigned long default_hash(const void* key) {

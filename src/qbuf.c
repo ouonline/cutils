@@ -131,8 +131,8 @@ void qbuf_move(struct qbuf* src, struct qbuf* dst) {
 
 int qbuf_equal(const struct qbuf* a, const struct qbuf* b) {
     if (a->__size__ != b->__size__) {
-        return 0;
+        return -1;
     }
 
-    return (memcmp(a->__base__, b->__base__, a->__size__) == 0);
+    return memcmp(a->__base__, b->__base__, a->__size__);
 }

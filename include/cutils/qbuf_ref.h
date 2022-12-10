@@ -22,13 +22,13 @@ static inline void qbuf_ref_reset(struct qbuf_ref* r) {
     r->size = 0;
 }
 
-/* returns 1 if equal, 0 otherwise. */
+/* returns 0 if equal */
 static inline int qbuf_ref_equal(const struct qbuf_ref* a, const struct qbuf_ref* b) {
     if (a->size != b->size) {
-        return 0;
+        return -1;
     }
 
-    return (memcmp(a->base, b->base, a->size) == 0);
+    return memcmp(a->base, b->base, a->size);
 }
 
 static inline void qbuf_ref_swap(struct qbuf_ref* a, struct qbuf_ref* b) {

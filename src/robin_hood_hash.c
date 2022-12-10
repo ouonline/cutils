@@ -43,7 +43,7 @@ static unsigned int do_lookup(const struct robin_hood_hash* h, const void* key) 
         }
 
         const void* key_in = h->ops->getkey(h->table[slot].data);
-        if (h->ops->equal(key, key_in)) {
+        if (h->ops->equal(key, key_in) == 0) {
             return slot;
         }
 
@@ -129,7 +129,7 @@ void* robin_hood_hash_insert(struct robin_hood_hash* h, void* data) {
         if (tmp_node.data == data) {
             const void* key_to_be_inserted = h->ops->getkey(tmp_node.data);
             const void* key = h->ops->getkey(table[slot].data);
-            if (h->ops->equal(key_to_be_inserted, key)) {
+            if (h->ops->equal(key_to_be_inserted, key) == 0) {
                 return table[slot].data;
             }
         }

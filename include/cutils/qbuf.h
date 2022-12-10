@@ -5,6 +5,7 @@
 extern "C" {
 #endif
 
+/* NOTE qbuf cannot be copied directly. use qbuf_swap() or qbuf_move(). */
 struct qbuf { /* DONOT visit fileds directly */
     void* __base__;
     unsigned long __size__;
@@ -48,7 +49,7 @@ static inline int qbuf_empty(const struct qbuf* q) {
     return (q->__size__ == 0);
 }
 
-/* returns 1 if equal, 0 otherwise. */
+/* returns 0 if equal */
 int qbuf_equal(const struct qbuf* a, const struct qbuf* b);
 
 #include "qbuf_ref.h"

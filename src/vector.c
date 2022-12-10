@@ -24,15 +24,56 @@ int vector_pop_back(struct vector* vec, void* item) {
     return 0;
 }
 
-void vector_destroy(struct vector* vec, void* arg, void (*destructor)(void* item, void* arg)) {
-    void* cursor = qbuf_data(&vec->buf);
-    const void* end = (const char*)cursor + qbuf_size(&vec->buf);
-    for (; cursor < end; cursor = (char*)cursor + vec->sizeof_item) {
-        if (destructor) {
-            destructor(cursor, arg);
-        }
+void* vector_front(struct vector* vec) {
+    if (qbuf_empty(&vec->buf)) {
+        return NULL;
+    }
+    return qbuf_data(&vec->buf);
+}
+
+void* vector_back(struct vector* vec) {
+    if (qbuf_empty(&vec->buf)) {
+        return NULL;
     }
 
-    qbuf_destroy(&vec->buf);
-    vec->sizeof_item = 0;
+    unsigned long offset = qbuf_size(&vec->buf) - vec->sizeof_item;
+    return qbuf_data(&vec->buf) + offset;
+}
+
+typedef void (*delete_func_t)(void*, void*);
+
+struct deleter_arg {
+    delete_func_t f;
+    void* arg_for_callback;
+};
+
+static int deleter(void* item, void* arg) {
+    struct deleter_arg* darg = (struct deleter_arg*)arg;
+    darg->f(item, darg->arg_for_callback);
+    return 0;
+}
+
+void vector_destroy(struct vector* vec, void* arg_for_callback, void (*cb)(void*, void*)) {
+    if (vec && cb) {
+        struct deleter_arg arg = { .f = cb, .arg_for_callback = arg_for_callback };
+        vector_foreach(vec, &arg, deleter);
+        qbuf_destroy(&vec->buf);
+        vec->sizeof_item = 0;
+    }
+}
+
+int vector_foreach(struct vector* vec, void* arg_for_callback, int (*f)(void*, void*)) {
+    unsigned long offset;
+    for (offset = 0; offset < qbuf_size(&vec->buf); offset += vec->sizeof_item) {
+        int ret = f((char*)qbuf_data(&vec->buf) + offset, arg_for_callback);
+        if (ret != 0) {
+            return ret;
+        }
+    }
+    return 0;
+}
+
+void* vector_at(struct vector* vec, unsigned int idx) {
+    unsigned int offset = qbuf_size(&vec->buf) + vec->sizeof_item * idx;
+    return qbuf_data(&vec->buf) + offset;
 }
