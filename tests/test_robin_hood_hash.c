@@ -1,10 +1,9 @@
 #include "cutils/robin_hood_hash.h"
 #include "cutils/time_utils.h"
+#include "cutils/hash_func.h"
 #include "test_utils.h"
 #include <stdio.h>
 #include <sys/time.h>
-
-#include "xxhash.h"
 
 #undef NDEBUG
 #include <assert.h>
@@ -20,7 +19,7 @@ static int default_equal(const void* a, const void* b) {
 }
 
 static unsigned long default_hash(const void* key) {
-    return XXH64(key, strlen((const char*)key), 5);
+    return bkd_hash(key, strlen((const char*)key));
 }
 
 static const struct robin_hood_hash_operations g_ops = {
