@@ -13,7 +13,7 @@ static int slot_is_empty(const struct robin_hood_hash_node* node) {
 
 int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int slot_num, float max_load_factor,
                          const struct robin_hood_hash_operations* ops) {
-    unsigned int max_data_num = slot_num * max_load_factor;
+    unsigned int max_value_num = slot_num * max_load_factor;
 
     h->table = (struct robin_hood_hash_node*)malloc(slot_num * sizeof(struct robin_hood_hash_node));
     if (!h->table) {
@@ -21,9 +21,9 @@ int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int slot_num, float
     }
 
     h->ops = ops;
-    h->meta.data_num = 0;
+    h->meta.value_num = 0;
     h->meta.lpsl = 0;
-    h->meta.max_data_num = max_data_num;
+    h->meta.max_value_num = max_value_num;
     h->meta.slot_num = slot_num;
     h->meta.max_load_factor = max_load_factor;
 
@@ -42,7 +42,7 @@ static unsigned int do_lookup(const struct robin_hood_hash* h, const void* key) 
             return UINT_MAX;
         }
 
-        const void* key_in = h->ops->getkey(h->table[slot].data);
+        const void* key_in = h->ops->getkey(h->table[slot].value);
         if (h->ops->equal(key, key_in) == 0) {
             return slot;
         }
@@ -55,17 +55,17 @@ static unsigned int do_lookup(const struct robin_hood_hash* h, const void* key) 
 
 void* robin_hood_hash_lookup(struct robin_hood_hash* h, const void* key) {
     unsigned int slot = do_lookup(h, key);
-    return (slot == UINT_MAX) ? NULL : h->table[slot].data;
+    return (slot == UINT_MAX) ? NULL : h->table[slot].value;
 }
 
 void robin_hood_hash_foreach(struct robin_hood_hash* h, void* arg_for_callback,
-                             void (*f)(void* data, void* arg)) {
+                             void (*f)(void* value, void* arg)) {
     for (unsigned int i = 0; i < h->meta.slot_num; ++i) {
         if (slot_is_empty(&h->table[i])) {
             continue;
         }
 
-        f(h->table[i].data, arg_for_callback);
+        f(h->table[i].value, arg_for_callback);
     }
 }
 
@@ -75,9 +75,10 @@ static void swap_node(struct robin_hood_hash_node* a, struct robin_hood_hash_nod
     *b = tmp;
 }
 
-static void rehash_callback(void* data, void* arg) {
+static void rehash_callback(void* value, void* arg) {
     struct robin_hood_hash* new_hash = (struct robin_hood_hash*)arg;
-    robin_hood_hash_insert(new_hash, arg);
+    const void* key = new_hash->ops->getkey(value);
+    robin_hood_hash_insert(new_hash, key, value);
 }
 
 /* TODO optimize */
@@ -98,22 +99,26 @@ static int rehash(struct robin_hood_hash* h) {
     return 0;
 }
 
-void* robin_hood_hash_insert(struct robin_hood_hash* h, void* data) {
+struct robin_hood_hash_insertion_res robin_hood_hash_insert(struct robin_hood_hash* h,
+                                                            const void* key, void* value) {
+    struct robin_hood_hash_insertion_res res;
+
     struct robin_hood_hash_meta* meta = &h->meta;
-    if (meta->data_num >= meta->max_data_num) {
+    if (meta->value_num >= meta->max_value_num) {
         int err = rehash(h);
         if (err) {
-            return NULL;
+            res.inserted = 0;
+            res.pvalue = NULL;
+            return res;
         }
     }
 
     struct robin_hood_hash_node* table = h->table;
-    const void* key = h->ops->getkey(data);
     unsigned int slot = h->ops->hash(key) % meta->slot_num;
 
     struct robin_hood_hash_node tmp_node;
     tmp_node.psl = 0;
-    tmp_node.data = data;
+    tmp_node.value = value;
 
     while (1) {
         if (slot_is_empty(&table[slot])) {
@@ -122,15 +127,21 @@ void* robin_hood_hash_insert(struct robin_hood_hash* h, void* data) {
             }
 
             table[slot] = tmp_node;
-            ++meta->data_num;
-            return data;
+            ++meta->value_num;
+
+            res.inserted = 1;
+            if (tmp_node.value == value) {
+                res.pvalue = &table[slot].value;
+            }
+            return res;
         }
 
-        if (tmp_node.data == data) {
-            const void* key_to_be_inserted = h->ops->getkey(tmp_node.data);
-            const void* key = h->ops->getkey(table[slot].data);
-            if (h->ops->equal(key_to_be_inserted, key) == 0) {
-                return table[slot].data;
+        if (tmp_node.value == value) {
+            const void* key_existed = h->ops->getkey(table[slot].value);
+            if (h->ops->equal(key, key_existed) == 0) {
+                res.inserted = 0;
+                res.pvalue = &table[slot].value;
+                return res;
             }
         }
 
@@ -139,13 +150,20 @@ void* robin_hood_hash_insert(struct robin_hood_hash* h, void* data) {
                 meta->lpsl = tmp_node.psl;
             }
             swap_node(&tmp_node, &table[slot]);
+
+            if (table[slot].value == value) {
+                res.pvalue = &table[slot].value;
+            }
         }
 
         ++tmp_node.psl;
         slot = (slot + 1) % meta->slot_num;
     }
 
-    return NULL;
+    /* unreachable */
+    res.inserted = 0;
+    res.pvalue = NULL;
+    return res;
 }
 
 void* robin_hood_hash_remove(struct robin_hood_hash* h, const void* key) {
@@ -154,8 +172,8 @@ void* robin_hood_hash_remove(struct robin_hood_hash* h, const void* key) {
         return NULL;
     }
 
-    void* ret = h->table[slot].data;
-    --h->meta.data_num;
+    void* ret = h->table[slot].value;
+    --h->meta.value_num;
 
     unsigned int next_slot = (slot + 1) % h->meta.slot_num;
     while (!slot_is_empty(&h->table[next_slot]) && h->table[next_slot].psl > 0) {

@@ -33,7 +33,7 @@ static void test_insert(struct robin_hood_hash* h, char** data) {
     struct timeval begin, end;
     gettimeofday(&begin, NULL);
     for (unsigned int i = 0; i < N; ++i) {
-        robin_hood_hash_insert(h, data[i]);
+        robin_hood_hash_insert(h, data[i], data[i]);
     }
     gettimeofday(&end, NULL);
     printf("insert ends...\ninserting [%u]([%u] valid) strings costs [%lf] ms.\n",
@@ -47,7 +47,7 @@ static void test_lookup(struct robin_hood_hash* h, char** data) {
         assert(robin_hood_hash_lookup(h, data[i - 1]) != NULL);
     }
     gettimeofday(&end, NULL);
-    printf("find [%u] costs %lf ms.\n", N, (double)diff_time_usec(end, &begin) / 1000);
+    printf("lookup [%u] costs %lf ms.\n", N, (double)diff_time_usec(end, &begin) / 1000);
 }
 
 static void test_remove(struct robin_hood_hash* h, char** data) {
@@ -61,12 +61,25 @@ static void test_remove(struct robin_hood_hash* h, char** data) {
 }
 
 static void test_rehash(char** data) {
+    printf("--- norehash insert -----\n");
+    struct robin_hood_hash norehash;
+    robin_hood_hash_init(&norehash, N * 2, ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR, &g_ops);
+    test_insert(&norehash, data);
+    printf("lpsl = %u\n", norehash.meta.lpsl);
+
+    printf("--- rehash insert -----\n");
     struct robin_hood_hash h;
     robin_hood_hash_init(&h, 10, ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR, &g_ops);
+    test_insert(&h, data);
+    printf("lpsl = %u\n", h.meta.lpsl);
 
-    for (unsigned i = 0; i < N; ++i) {
-        assert(robin_hood_hash_insert(&h, data[i]) != NULL);
-    }
+    printf("--- rehash lookup -----\n");
+    test_lookup(&h, data);
+    printf("lpsl = %u\n", h.meta.lpsl);
+
+    printf("--- rehash lookup again -----\n");
+    test_lookup(&h, data);
+    printf("lpsl = %u\n", h.meta.lpsl);
 
     printf("test rehash ok\n");
 }
@@ -78,13 +91,17 @@ int main(void) {
     struct robin_hood_hash h;
     robin_hood_hash_init(&h, N * 2, ROBIN_HOOD_HASH_DEFAULT_MAX_LOAD_FACTOR, &g_ops);
 
+    printf("----------- test insert -------------\n");
     test_insert(&h, data);
+    printf("----------- test lookup -------------\n");
     test_lookup(&h, data);
+    printf("----------- test remove -------------\n");
     test_remove(&h, data);
 
-    robin_hood_hash_destroy(&h);
-
+    printf("----------- test rehash -------------\n");
     test_rehash(data);
+
+    robin_hood_hash_destroy(&h);
 
     return 0;
 }
