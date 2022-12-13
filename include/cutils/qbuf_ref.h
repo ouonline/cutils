@@ -5,8 +5,7 @@
 extern "C" {
 #endif
 
-#include <stddef.h>
-#include <string.h>
+#include <string.h> /* memcmp() */
 
 struct qbuf_ref {
     const void* base;

@@ -65,25 +65,25 @@ static inline int list_empty(struct list_node* head) {
 }
 
 /* move one list to another */
-static inline void list_move_prev(struct list_node* list,
-                                  struct list_node* head) {
-    if (!list_empty(list)) {
-        list->next->prev = head->prev;
-        list->prev->next = head;
-        head->prev->next = list->next;
-        head->prev = list->prev;
-        list_init(list);
+static inline void list_move_prev(struct list_node* src,
+                                  struct list_node* dst) {
+    if (!list_empty(src)) {
+        src->next->prev = dst->prev;
+        src->prev->next = dst;
+        dst->prev->next = src->next;
+        dst->prev = src->prev;
+        list_init(src);
     }
 }
 
-static inline void list_move_next(struct list_node* list,
-                                  struct list_node* head) {
-    if (!list_empty(list)) {
-        list->next->prev = head;
-        list->prev->next = head->next;
-        head->next->prev = list->prev;
-        head->next = list->next;
-        list_init(list);
+static inline void list_move_next(struct list_node* src,
+                                  struct list_node* dst) {
+    if (!list_empty(src)) {
+        src->next->prev = dst;
+        src->prev->next = dst->next;
+        dst->next->prev = src->prev;
+        dst->next = src->next;
+        list_init(src);
     }
 }
 

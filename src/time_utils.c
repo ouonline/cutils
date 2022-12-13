@@ -69,5 +69,5 @@ void current_datetime(char buf[], struct tm* tp) {
     gettimeofday(&tv, NULL);
     localtime_r(&tv.tv_sec, tp);
     len = strftime(buf, 27, "%F %T", tp);
-    sprintf((char*)buf + len, ".%06ld", tv.tv_usec);
+    sprintf((char*)buf + len, ".%06d", tv.tv_usec);
 }
