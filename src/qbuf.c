@@ -116,17 +116,21 @@ void qbuf_swap(struct qbuf* a, struct qbuf* b) {
     }
 }
 
+void qbuf_move_construct(struct qbuf* old_item, struct qbuf* new_item) {
+    if (old_item->__base__ == &old_item->__capacity__) {
+        new_item->__base__ = &new_item->__capacity__;
+        new_item->__size__ = old_item->__size__;
+        new_item->__capacity__ = old_item->__capacity__;
+        old_item->__size__ = 0;
+    } else {
+        *new_item = *old_item;
+        qbuf_init(old_item);
+    }
+}
+
 void qbuf_move(struct qbuf* src, struct qbuf* dst) {
     qbuf_destroy(dst);
-    if (src->__base__ == &src->__capacity__) {
-        dst->__base__ = &dst->__capacity__;
-        dst->__size__ = src->__size__;
-        dst->__capacity__ = src->__capacity__;
-        src->__size__ = 0;
-    } else {
-        *dst = *src;
-        qbuf_init(src);
-    }
+    qbuf_move_construct(src, dst);
 }
 
 int qbuf_equal(const struct qbuf* a, const struct qbuf* b) {

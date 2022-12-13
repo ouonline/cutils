@@ -28,6 +28,8 @@ int qbuf_append_c(struct qbuf* q, char c);
 void qbuf_swap(struct qbuf* a, struct qbuf* b);
 void qbuf_move(struct qbuf* src, struct qbuf* dst);
 
+void qbuf_move_construct(struct qbuf* old_item, struct qbuf* new_item);
+
 static inline void qbuf_clear(struct qbuf* q) {
     q->__size__ = 0;
 }
@@ -54,8 +56,8 @@ int qbuf_equal(const struct qbuf* a, const struct qbuf* b);
 
 #include "qbuf_ref.h"
 
-static inline struct qbuf_ref* qbuf_get_ref(const struct qbuf* q) {
-    return (struct qbuf_ref*)q;
+static inline const struct qbuf_ref* qbuf_get_ref(const struct qbuf* q) {
+    return (const struct qbuf_ref*)q;
 }
 
 #ifdef __cplusplus
