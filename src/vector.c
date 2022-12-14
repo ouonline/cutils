@@ -53,15 +53,6 @@ static int deleter(void* item, void* arg) {
     return 0;
 }
 
-void vector_destroy(struct vector* vec, void* arg_for_callback, void (*cb)(void*, void*)) {
-    if (vec && cb) {
-        struct deleter_arg arg = { .f = cb, .arg_for_callback = arg_for_callback };
-        vector_foreach(vec, &arg, deleter);
-        qbuf_destroy(&vec->buf);
-        vec->sizeof_item = 0;
-    }
-}
-
 int vector_foreach(struct vector* vec, void* arg_for_callback, int (*f)(void*, void*)) {
     unsigned long offset;
     for (offset = 0; offset < qbuf_size(&vec->buf); offset += vec->sizeof_item) {
@@ -73,7 +64,40 @@ int vector_foreach(struct vector* vec, void* arg_for_callback, int (*f)(void*, v
     return 0;
 }
 
+void vector_destroy(struct vector* vec, void* arg_for_callback, void (*cb)(void*, void*)) {
+    if (vec && cb) {
+        struct deleter_arg arg = { .f = cb, .arg_for_callback = arg_for_callback };
+        vector_foreach(vec, &arg, deleter);
+        qbuf_destroy(&vec->buf);
+        vec->sizeof_item = 0;
+    }
+}
+
 void* vector_at(struct vector* vec, unsigned int idx) {
-    unsigned int offset = qbuf_size(&vec->buf) + vec->sizeof_item * idx;
-    return qbuf_data(&vec->buf) + offset;
+    return qbuf_data(&vec->buf) + vec->sizeof_item * idx;
+}
+
+int vector_remove(struct vector* vec, unsigned int idx, void* arg_for_callback,
+                  void (*destroy)(void*, void*)) {
+    if (vector_empty(vec)) {
+        return 0;
+    }
+
+    unsigned int sz = vector_size(vec);
+    if (idx >= sz) {
+        return 0;
+    }
+
+    if (destroy) {
+        destroy(vector_at(vec, idx), arg_for_callback);
+    }
+
+    if (idx < sz - 1) {
+        void* dst = qbuf_data(&vec->buf) + vec->sizeof_item * idx;
+        const void* src = qbuf_data(&vec->buf) + vec->sizeof_item * (idx + 1);
+        memmove(dst, src, (sz - idx - 1) * vec->sizeof_item);
+    }
+
+    qbuf_resize(&vec->buf, qbuf_size(&vec->buf) - vec->sizeof_item);
+    return 1;
 }
