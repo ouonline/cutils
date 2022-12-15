@@ -101,3 +101,24 @@ int vector_remove(struct vector* vec, unsigned int idx, void* arg_for_callback,
     qbuf_resize(&vec->buf, qbuf_size(&vec->buf) - vec->sizeof_item);
     return 1;
 }
+
+int vector_reserve(struct vector* vec, unsigned int newsize) {
+    return qbuf_reserve(&vec->buf, vec->sizeof_item * newsize);
+}
+
+int vector_resize(struct vector* vec, unsigned int newsize, void* arg_for_callback,
+                  void (*destroy)(void* item, void* arg)) {
+    unsigned int oldsize = vector_size(vec);
+    if (newsize == oldsize) {
+        return 0;
+    }
+    if (newsize < oldsize) {
+        if (destroy) {
+            for (unsigned int i = newsize; i < oldsize; ++i) {
+                destroy(vector_at(vec, i), arg_for_callback);
+            }
+        }
+    }
+
+    return qbuf_resize(&vec->buf, newsize * vec->sizeof_item);
+}

@@ -19,15 +19,21 @@ int vector_pop_back(struct vector*, void* item);
 
 void* vector_front(struct vector*);
 void* vector_back(struct vector*);
+void* vector_at(struct vector*, unsigned int idx);
 
 /* returns the number of removed item */
 int vector_remove(struct vector*, unsigned int idx, void* arg_for_callback,
-                  void (*)(void* item, void* arg));
+                  void (*destroy)(void* item, void* arg));
+
+/* returns 0 if success */
+int vector_reserve(struct vector*, unsigned int newsize);
+
+/* returns 0 if success */
+int vector_resize(struct vector*, unsigned int newsize, void* arg_for_callback,
+                  void (*destroy)(void* item, void* arg));
 
 /* iteration terminates if `callback` returns a non-zero value, which will be the returned value of vector_foreach(). */
 int vector_foreach(struct vector*, void* arg_for_callback, int (*callback)(void* item, void* arg));
-
-void* vector_at(struct vector*, unsigned int idx);
 
 static inline int vector_empty(struct vector* vec) {
     return (qbuf_size(&vec->buf) == 0);
