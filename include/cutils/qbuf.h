@@ -28,7 +28,7 @@ int qbuf_append_c(struct qbuf* q, char c);
 void qbuf_swap(struct qbuf* a, struct qbuf* b);
 void qbuf_move(struct qbuf* src, struct qbuf* dst);
 
-void qbuf_move_construct(struct qbuf* old_item, struct qbuf* new_item);
+void qbuf_move_construct(struct qbuf* src_item, struct qbuf* new_item);
 
 static inline void qbuf_clear(struct qbuf* q) {
     q->__size__ = 0;
@@ -45,6 +45,11 @@ static inline void* qbuf_data(const struct qbuf* q) {
 
 static inline unsigned long qbuf_size(const struct qbuf* q) {
     return q->__size__;
+}
+
+static inline int qbuf_copy_construct(struct qbuf* src_item, struct qbuf* new_item) {
+    qbuf_init(new_item);
+    return qbuf_assign(new_item, qbuf_data(src_item), qbuf_size(src_item));
 }
 
 static inline int qbuf_empty(const struct qbuf* q) {
