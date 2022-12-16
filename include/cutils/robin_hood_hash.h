@@ -60,7 +60,8 @@ struct robin_hood_hash_insertion_res robin_hood_hash_insert(struct robin_hood_ha
 /* returns the removed value, or NULL if not found. */
 void* robin_hood_hash_remove(struct robin_hood_hash*, const void* key);
 
-void robin_hood_hash_destroy(struct robin_hood_hash*);
+void robin_hood_hash_destroy(struct robin_hood_hash*, void* arg_for_callback,
+                             void (*destroy)(void* value, void* arg));
 
 static inline unsigned int robin_hood_hash_size(struct robin_hood_hash* h) {
     return h->meta.value_num;

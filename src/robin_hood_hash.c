@@ -95,7 +95,7 @@ static int rehash(struct robin_hood_hash* h) {
 
     struct robin_hood_hash tmp = *h;
     *h = new_hash;
-    robin_hood_hash_destroy(&tmp);
+    robin_hood_hash_destroy(&tmp, NULL, NULL);
     return 0;
 }
 
@@ -187,8 +187,12 @@ void* robin_hood_hash_remove(struct robin_hood_hash* h, const void* key) {
     return ret;
 }
 
-void robin_hood_hash_destroy(struct robin_hood_hash* h) {
+void robin_hood_hash_destroy(struct robin_hood_hash* h, void* arg_for_callback,
+                             void (*destroy)(void* value, void* arg)) {
     if (h->table) {
+        if (destroy) {
+            robin_hood_hash_foreach(h, arg_for_callback, destroy);
+        }
         free(h->table);
     }
 }

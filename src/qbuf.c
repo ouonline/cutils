@@ -7,6 +7,9 @@
 void qbuf_init(struct qbuf* q) {
     q->__base__ = &q->__capacity__;
     q->__size__ = 0;
+#ifndef NDEBUG
+    q->__capacity__ = 0;
+#endif
 }
 
 void qbuf_destroy(struct qbuf* q) {
