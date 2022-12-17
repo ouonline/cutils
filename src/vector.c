@@ -65,9 +65,11 @@ int vector_foreach(struct vector* vec, void* arg_for_callback, int (*f)(void*, v
 }
 
 void vector_destroy(struct vector* vec, void* arg_for_callback, void (*cb)(void*, void*)) {
-    if (vec && cb) {
-        struct deleter_arg arg = { .f = cb, .arg_for_callback = arg_for_callback };
-        vector_foreach(vec, &arg, deleter);
+    if (vec) {
+        if (cb) {
+            struct deleter_arg arg = {.f = cb, .arg_for_callback = arg_for_callback};
+            vector_foreach(vec, &arg, deleter);
+        }
         qbuf_destroy(&vec->buf);
         vec->sizeof_item = 0;
     }
