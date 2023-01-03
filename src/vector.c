@@ -71,7 +71,6 @@ void vector_destroy(struct vector* vec, void* arg_for_callback, void (*cb)(void*
             vector_foreach(vec, &arg, deleter);
         }
         qbuf_destroy(&vec->buf);
-        vec->sizeof_item = 0;
     }
 }
 

@@ -15,8 +15,8 @@ void qbuf_init(struct qbuf* q) {
 void qbuf_destroy(struct qbuf* q) {
     if (q->__base__ != &q->__capacity__) {
         free(q->__base__);
-        qbuf_init(q);
     }
+    qbuf_init(q);
 }
 
 int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
