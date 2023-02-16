@@ -13,6 +13,8 @@ long bin2long(const char* src);
 long hex2long(const char* src);
 long nhex2long(const char* src, unsigned int len);
 
+void* memmem(const void* text, unsigned long tlen, const void* pattern, unsigned long plen);
+
 #ifdef __cplusplus
 }
 #endif
