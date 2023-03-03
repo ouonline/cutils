@@ -37,7 +37,7 @@ void* vector_back(struct vector* vec) {
     }
 
     unsigned long offset = qbuf_size(&vec->buf) - vec->sizeof_item;
-    return qbuf_data(&vec->buf) + offset;
+    return (char*)qbuf_data(&vec->buf) + offset;
 }
 
 typedef void (*delete_func_t)(void*, void*);
@@ -75,7 +75,7 @@ void vector_destroy(struct vector* vec, void* arg_for_callback, void (*cb)(void*
 }
 
 void* vector_at(struct vector* vec, unsigned int idx) {
-    return qbuf_data(&vec->buf) + vec->sizeof_item * idx;
+    return (char*)qbuf_data(&vec->buf) + vec->sizeof_item * idx;
 }
 
 int vector_remove(struct vector* vec, unsigned int idx, void* arg_for_callback,
@@ -94,8 +94,8 @@ int vector_remove(struct vector* vec, unsigned int idx, void* arg_for_callback,
     }
 
     if (idx < sz - 1) {
-        void* dst = qbuf_data(&vec->buf) + vec->sizeof_item * idx;
-        const void* src = qbuf_data(&vec->buf) + vec->sizeof_item * (idx + 1);
+        void* dst = (char*)qbuf_data(&vec->buf) + vec->sizeof_item * idx;
+        const void* src = (char*)qbuf_data(&vec->buf) + vec->sizeof_item * (idx + 1);
         memmove(dst, src, (sz - idx - 1) * vec->sizeof_item);
     }
 

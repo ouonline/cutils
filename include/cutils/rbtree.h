@@ -5,10 +5,15 @@
 
 #include "utils.h"
 
+#ifdef _MSC_VER
+__declspec(align(8))
+#else
+__attribute__((aligned(sizeof(long))))
+#endif
 struct rb_node {
     unsigned long parent_color;
     struct rb_node *left, *right;
-} __attribute__((aligned(sizeof(long))));
+};
 
 struct rb_root {
     struct rb_node* node;

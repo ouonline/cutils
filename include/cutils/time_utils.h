@@ -7,7 +7,12 @@ extern "C" {
 
 #include <stdint.h>
 #include <time.h>
+
+#ifdef _MSC_VER
+#include <winsock.h> /* struct timeval */
+#else
 #include <sys/time.h>
+#endif
 
 uint64_t str2gmtime(const char* time_str);
 char* gmtime2str(uint64_t timeval, char* buf);
@@ -21,9 +26,6 @@ static inline uint64_t gmtime2bjtime(uint64_t ts) {
 }
 
 uint64_t diff_time_usec(struct timeval end, const struct timeval* begin);
-
-/* time format: YYYY-MM-DD_hh:mm:ss.uuuuuu. buf size >= 27 */
-void current_datetime(char buf[], struct tm* tp);
 
 #ifdef __cplusplus
 }

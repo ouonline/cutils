@@ -101,7 +101,7 @@ int main(void) {
     printf("----------- test rehash -------------\n");
     test_rehash(data);
 
-    robin_hood_hash_destroy(&h);
+    robin_hood_hash_destroy(&h, NULL, NULL);
 
     return 0;
 }

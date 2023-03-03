@@ -1,8 +1,5 @@
 #include "cutils/time_utils.h"
 #include <stdio.h>
-#include <time.h>
-#include <sys/time.h>
-#include <string.h>
 
 /* implementation of mktime() from linux kernel */
 
@@ -10,7 +7,7 @@
  * mktime() implementation from kernel/time.c.
  * Converts Gregorian date to seconds since 1970-01-01 00:00:00.
  **/
-static inline uint64_t
+static uint64_t
 __mktime(const unsigned int year0, const unsigned int mon0,
          const unsigned int day, const unsigned int hour,
          const unsigned int min, const unsigned int sec) {
@@ -42,7 +39,11 @@ uint64_t str2gmtime(const char* time_str) {
 char* gmtime2str(uint64_t ts, char* buf) {
     struct tm tm;
     time_t tt = ts;
+#ifdef _MSC_VER
+    gmtime_s(&tm, &tt);
+#else
     gmtime_r(&tt, &tm);
+#endif
     sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d",
             tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
             tm.tm_hour, tm.tm_min, tm.tm_sec);
@@ -55,19 +56,4 @@ uint64_t diff_time_usec(struct timeval end, const struct timeval* begin) {
         end.tv_usec += 1000000;
     }
     return (end.tv_sec - begin->tv_sec) * 1000000 + (end.tv_usec - begin->tv_usec);
-}
-
-void current_datetime(char buf[], struct tm* tp) {
-    int len;
-    struct timeval tv;
-    struct tm ltm;
-
-    if (!tp) {
-        tp = &ltm;
-    }
-
-    gettimeofday(&tv, NULL);
-    localtime_r(&tv.tv_sec, tp);
-    len = strftime(buf, 27, "%F %T", tp);
-    sprintf((char*)buf + len, ".%06d", tv.tv_usec);
 }
