@@ -1,6 +1,7 @@
-#include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <limits.h>
+#include "cutils/str_utils.h"
 
 static int hex_value[] = {
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /* 0 - 15 */
@@ -92,6 +93,8 @@ long bin2long(const char* src) {
     return result;
 }
 
+/* ------------------------------------------------------------------------- */
+
 /* https://opensource.apple.com/source/Libc/Libc-825.40.1/string/FreeBSD/memmem.c.auto.html */
 void* memmem(const void* l, unsigned long l_len, const void* s, unsigned long s_len) {
     register char *cur, *last;
@@ -123,4 +126,114 @@ void* memmem(const void* l, unsigned long l_len, const void* s, unsigned long s_
     }
 
     return NULL;
+}
+
+/* ------------------------------------------------------------------------- */
+
+#ifdef SUNDAY_DEBUG
+#include <stdio.h>
+static void debug_compare(const char *text, int tlen,
+                          const char *pattern, int plen,
+                          int i, int j) {
+    int c, k;
+
+    if (tlen > 10) {
+        printf("     ");
+        for (c = 1; c < tlen / 10; ++c) {
+            printf("                   %d", c);
+        }
+        if (tlen % 10 != 0) {
+            printf("                   %d", c);
+        }
+        printf("\n");
+    }
+    printf("pos");
+    for (c = 0; c <= tlen / 10; ++c) {
+        for (k = 0; k < 10; ++k) {
+            if (c * 10 + k < tlen) {
+                printf(" %d", k);
+            }
+        }
+    }
+    printf("\n");
+
+    printf("T  ");
+    for (c = 0; c < tlen; ++c) {
+        printf(" %c", text[c]);
+    }
+    printf("\n");
+
+    printf("P  ");
+    for (c = 0; c < i - j; ++c) {
+        printf("  ");
+    }
+    for (c = 0; c < plen; ++c) {
+        printf(" %c", pattern[c]);
+    }
+    printf("\n");
+
+    printf("   ");
+    for (c = 0; c < i; ++c) {
+        printf("  ");
+    }
+    printf(" *\n");
+
+    printf("---------------------------------\n");
+}
+
+static int my_memcmp(const char* text, int tlen,
+                     const char* pattern, int plen, int idx) {
+    int i;
+
+    for (i = plen - 1; i >= 0; --i) {
+        debug_compare(text, tlen, pattern, plen, idx + i, i);
+        if (text[idx + i] != pattern[i]) {
+            return text[idx + i] - pattern[i];
+        }
+    }
+
+    return 0;
+}
+#else
+#define my_memcmp(text, tlen, pattern, plen, idx)   \
+    memcmp(text + idx, pattern, plen)
+#endif
+
+void sunday_preprocess(struct sunday_context* ctx, const char* pattern,
+                       unsigned int plen) {
+    unsigned int i;
+
+    for (i = 0; i < SUNDAY_ALPHABET_LEN; ++i) {
+        ctx->pos[i] = plen + 1;
+    }
+
+    for (i = 0; i < plen; ++i) {
+        ctx->pos[(unsigned char)pattern[i]] = plen - i;
+    }
+
+    ctx->pattern = pattern;
+    ctx->plen = plen;
+}
+
+unsigned int sunday_match(const struct sunday_context* ctx, const char* text,
+                          unsigned int tlen) {
+    int x = 0;
+
+    while (1) {
+        if (x + ctx->plen > tlen) {
+            break;
+        }
+
+        if (my_memcmp(text, tlen, ctx->pattern, ctx->plen, x) == 0) {
+            return x;
+        }
+
+        if (x + ctx->plen == tlen) {
+            break;
+        }
+
+        x += ctx->pos[(unsigned char)text[x + ctx->plen]];
+    }
+
+    return UINT_MAX;
 }

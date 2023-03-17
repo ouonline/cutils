@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <string.h>
 #include "cutils/str_utils.h"
 
 #undef NDEBUG
@@ -13,14 +13,17 @@ static void test_dec2long() {
     assert(dec2long("     -563n33j") == -563);
 }
 
+static void test_sunday_matching() {
+    const char *text = "ABCZABCDAEZABCDABCDABDE", *pattern = "ABCDABD";
+
+    struct sunday_context ctx;
+    sunday_preprocess(&ctx, pattern, strlen(pattern));
+    unsigned int ret = sunday_match(&ctx, text, strlen(text));
+    assert(ret == 15);
+}
+
 int main(void) {
     test_dec2long();
-
-    const char* str[] = {"cc", "e8", "cf", "7f", NULL};
-    for (int i = 0; str[i]; ++i) {
-        long result = hex2long(str[i]);
-        printf("%s -> %ld\n", str[i], result);
-    }
-
+    test_sunday_matching();
     return 0;
 }
