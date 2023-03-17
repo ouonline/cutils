@@ -13,8 +13,6 @@ static int slot_is_empty(const struct robin_hood_hash_node* node) {
 
 int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int slot_num, float max_load_factor,
                          const struct robin_hood_hash_operations* ops) {
-    unsigned int max_value_num = slot_num * max_load_factor;
-
     h->table = (struct robin_hood_hash_node*)malloc(slot_num * sizeof(struct robin_hood_hash_node));
     if (!h->table) {
         return 1;
@@ -23,11 +21,12 @@ int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int slot_num, float
     h->ops = ops;
     h->meta.value_num = 0;
     h->meta.lpsl = 0;
-    h->meta.max_value_num = max_value_num;
+    h->meta.max_value_num = slot_num * max_load_factor;
     h->meta.slot_num = slot_num;
     h->meta.max_load_factor = max_load_factor;
 
-    for (unsigned int i = 0; i < slot_num; ++i) {
+    unsigned int i;
+    for (i = 0; i < slot_num; ++i) {
         mark_slot_empty(&h->table[i]);
     }
 
@@ -37,7 +36,8 @@ int robin_hood_hash_init(struct robin_hood_hash* h, unsigned int slot_num, float
 static unsigned int do_lookup(const struct robin_hood_hash* h, const void* key) {
     unsigned int slot = h->ops->hash(key) % h->meta.slot_num;
 
-    for (unsigned int psl = 0; psl <= h->meta.lpsl; ++psl) {
+    unsigned int psl;
+    for (psl = 0; psl <= h->meta.lpsl; ++psl) {
         if (slot_is_empty(&h->table[slot]) || psl > h->table[slot].psl) {
             return UINT_MAX;
         }
@@ -60,7 +60,8 @@ void* robin_hood_hash_lookup(struct robin_hood_hash* h, const void* key) {
 
 void robin_hood_hash_foreach(struct robin_hood_hash* h, void* arg_for_callback,
                              void (*f)(void* value, void* arg)) {
-    for (unsigned int i = 0; i < h->meta.slot_num; ++i) {
+    unsigned int i;
+    for (i = 0; i < h->meta.slot_num; ++i) {
         if (slot_is_empty(&h->table[i])) {
             continue;
         }

@@ -115,7 +115,8 @@ int vector_resize(struct vector* vec, unsigned int newsize, void* arg_for_callba
     }
     if (newsize < oldsize) {
         if (destroy) {
-            for (unsigned int i = newsize; i < oldsize; ++i) {
+            unsigned int i;
+            for (i = newsize; i < oldsize; ++i) {
                 destroy(vector_at(vec, i), arg_for_callback);
             }
         }
