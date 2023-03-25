@@ -5,12 +5,13 @@
 
 #include "utils.h"
 
+struct
 #ifdef _MSC_VER
 __declspec(align(8))
 #else
 __attribute__((aligned(sizeof(long))))
 #endif
-struct rb_node {
+rb_node {
     unsigned long parent_color;
     struct rb_node *left, *right;
 };
