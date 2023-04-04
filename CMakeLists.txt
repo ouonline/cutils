@@ -8,9 +8,17 @@ option(CUTILS_INSTALL "install headers and libs" ON)
 
 # ----- targets ----- #
 
-file(GLOB_RECURSE CUTILS_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
-add_library(cutils_static STATIC ${CUTILS_SRC})
+file(GLOB_RECURSE __CUTILS_SRC__ ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c)
+add_library(cutils_static STATIC ${__CUTILS_SRC__})
+unset(__CUTILS_SRC__)
+
 target_include_directories(cutils_static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+if(MSVC)
+    target_compile_options(cutils_static PRIVATE /W4)
+else()
+    target_compile_options(cutils_static PRIVATE -Wall -Wextra -Werror)
+endif()
 
 # ----- installations ----- #
 
