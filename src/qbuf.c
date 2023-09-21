@@ -5,48 +5,37 @@
 #define MAX_INLINE_SIZE sizeof(unsigned long)
 
 void qbuf_init(struct qbuf* q) {
-    q->__base__ = &q->__capacity__;
+    q->__base__ = NULL;
     q->__size__ = 0;
-#ifndef NDEBUG
     q->__capacity__ = 0;
-#endif
 }
 
 void qbuf_destroy(struct qbuf* q) {
-    if (q->__base__ != &q->__capacity__) {
+    if (q->__base__) {
         free(q->__base__);
+        qbuf_init(q);
     }
-    qbuf_init(q);
 }
 
 int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
-    unsigned long real_capacity;
-    if (q->__base__ == &q->__capacity__) {
-        real_capacity = MAX_INLINE_SIZE;
-    } else {
-        real_capacity = q->__capacity__;
+    if (expected_size <= q->__capacity__) {
+        return 0;
     }
 
-    if (expected_size <= real_capacity) {
-        return 0;
+    unsigned long real_capacity;
+    if (q->__capacity__ == 0) {
+        real_capacity = 4;
+    } else {
+        real_capacity = q->__capacity__;
     }
 
     do {
         real_capacity <<= 1;
     } while (real_capacity < expected_size);
 
-    void* new_base;
-    if (q->__base__ == &q->__capacity__) {
-        new_base = malloc(real_capacity);
-        if (!new_base) {
-            return -1;
-        }
-        *(unsigned long*)new_base = q->__capacity__; /* copy data */
-    } else {
-        new_base = realloc(q->__base__, real_capacity);
-        if (!new_base) {
-            return -1;
-        }
+    void* new_base = realloc(q->__base__, real_capacity);
+    if (!new_base) {
+        return -1;
     }
 
     q->__base__ = new_base;
@@ -84,56 +73,6 @@ int qbuf_append_c(struct qbuf* q, char c) {
     *((char*)q->__base__ + q->__size__) = c;
     q->__size__ = new_size;
     return 0;
-}
-
-#define do_swap_value(type, __a__, __b__)       \
-    do {                                        \
-        type ___tmp___ = (__a__);               \
-        (__a__) = (__b__);                      \
-        (__b__) = ___tmp___;                    \
-    } while (0)
-
-#define do_swap2(type, inline_ptr, non_inline_ptr)                      \
-    do {                                                                \
-        type ___tmp___ = *(inline_ptr);                                 \
-        *(inline_ptr) = *(non_inline_ptr);                              \
-        (non_inline_ptr)->__base__ = &(non_inline_ptr)->__capacity__;   \
-        (non_inline_ptr)->__capacity__ = ___tmp___.__capacity__;        \
-        (non_inline_ptr)->__size__ = ___tmp___.__size__;                \
-    } while (0)
-
-void qbuf_swap(struct qbuf* a, struct qbuf* b) {
-    if (a->__base__ == &a->__capacity__) {
-        if (b->__base__ == &b->__capacity__) {
-            do_swap_value(unsigned long, a->__capacity__, b->__capacity__);
-            do_swap_value(unsigned long, a->__size__, b->__size__);
-        } else {
-            do_swap2(struct qbuf, a, b);
-        }
-    } else {
-        if (b->__base__ == &b->__capacity__) {
-            do_swap2(struct qbuf, b, a);
-        } else {
-            do_swap_value(struct qbuf, *a, *b);
-        }
-    }
-}
-
-void qbuf_move_construct(struct qbuf* src_item, struct qbuf* new_item) {
-    if (src_item->__base__ == &src_item->__capacity__) {
-        new_item->__base__ = &new_item->__capacity__;
-        new_item->__size__ = src_item->__size__;
-        new_item->__capacity__ = src_item->__capacity__;
-        src_item->__size__ = 0;
-    } else {
-        *new_item = *src_item;
-        qbuf_init(src_item);
-    }
-}
-
-void qbuf_move(struct qbuf* src, struct qbuf* dst) {
-    qbuf_destroy(dst);
-    qbuf_move_construct(src, dst);
 }
 
 int qbuf_equal(const struct qbuf* a, const struct qbuf* b) {
