@@ -1,5 +1,5 @@
 #include "cutils/vector.h"
-#include <stddef.h> /* NULL */
+#include <string.h> /* memcpy */
 
 void vector_init(struct vector* vec, unsigned int sizeof_item) {
     qbuf_init(&vec->buf);
