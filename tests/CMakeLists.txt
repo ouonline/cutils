@@ -22,7 +22,8 @@ target_link_libraries(test_str_utils PRIVATE cutils_static)
 add_executable(test_qbuf test_qbuf.c)
 target_link_libraries(test_qbuf PRIVATE cutils_static)
 
-# -------------------------------------------------------------------------- #
+add_executable(test_cvector test_cvector.c)
+target_link_libraries(test_cvector PRIVATE cutils_static)
 
 add_executable(test_robin_hood_hash test_robin_hood_hash.c)
 target_link_libraries(test_robin_hood_hash PRIVATE cutils_static)
