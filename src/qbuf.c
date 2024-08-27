@@ -1,6 +1,7 @@
 #include "cutils/qbuf.h"
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #define MAX_INLINE_SIZE sizeof(unsigned long)
 
@@ -35,7 +36,7 @@ int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
 
     void* new_base = realloc(q->__base__, real_capacity);
     if (!new_base) {
-        return -1;
+        return -ENOMEM;
     }
 
     q->__base__ = new_base;
@@ -46,7 +47,7 @@ int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
 
 int qbuf_resize(struct qbuf* q, unsigned long expected_size) {
     if (qbuf_reserve(q, expected_size) != 0) {
-        return -1;
+        return -ENOMEM;
     }
 
     q->__size__ = expected_size;
@@ -56,7 +57,7 @@ int qbuf_resize(struct qbuf* q, unsigned long expected_size) {
 int qbuf_append(struct qbuf* q, const void* data, unsigned long size) {
     const unsigned long new_size = q->__size__ + size;
     if (qbuf_reserve(q, new_size) != 0) {
-        return -1;
+        return -ENOMEM;
     }
 
     memcpy((char*)(q->__base__) + q->__size__, data, size);
@@ -67,7 +68,7 @@ int qbuf_append(struct qbuf* q, const void* data, unsigned long size) {
 int qbuf_append_c(struct qbuf* q, char c) {
     const unsigned long new_size = q->__size__ + 1;
     if (qbuf_reserve(q, new_size) != 0) {
-        return -1;
+        return -ENOMEM;
     }
 
     *((char*)q->__base__ + q->__size__) = c;

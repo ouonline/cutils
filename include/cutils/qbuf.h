@@ -15,6 +15,8 @@ struct qbuf { /* DONOT visit fileds directly */
 typedef struct qbuf QBuf;
 #endif
 
+/** the following functions return 0 or -ENOMEM, unless otherwise specified. */
+
 void qbuf_init(struct qbuf* q);
 void qbuf_destroy(struct qbuf* q);
 
