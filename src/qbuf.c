@@ -14,7 +14,6 @@ void qbuf_init(struct qbuf* q) {
 void qbuf_destroy(struct qbuf* q) {
     if (q->__base__) {
         free(q->__base__);
-        qbuf_init(q);
     }
 }
 

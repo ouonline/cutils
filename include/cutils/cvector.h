@@ -18,6 +18,10 @@ static inline void cvector_destroy(struct cvector* vec) {
     qbuf_destroy(&vec->buf);
 }
 
+static inline void cvector_clear(struct cvector* vec) {
+    qbuf_clear(&vec->buf);
+}
+
 /** returns 0 if success */
 #define cvector_push_back(_vec_, _type_, _element_)                     \
     ({                                                                  \
