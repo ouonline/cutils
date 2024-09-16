@@ -38,6 +38,10 @@ static inline unsigned long qbuf_size(const struct qbuf* q) {
     return q->__size__;
 }
 
+static inline unsigned long qbuf_capacity(const struct qbuf* q) {
+    return q->__capacity__;
+}
+
 static inline int qbuf_empty(const struct qbuf* q) {
     return (q->__size__ == 0);
 }
