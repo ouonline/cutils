@@ -14,7 +14,10 @@ extern "C" {
 #include <sys/time.h>
 #endif
 
-uint64_t str2gmtime(const char* time_str);
+/* str format: %d-%d-%d %d:%d:%d */
+uint64_t str2gmtime(const char* str);
+
+/* str format: %04d-%02d-%02d %02d:%02d:%02d */
 char* gmtime2str(uint64_t timeval, char* buf);
 
 static inline uint64_t bjtime2gmtime(uint64_t ts) {
