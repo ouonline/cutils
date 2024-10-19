@@ -7,7 +7,7 @@ static void test_diff_time(void) {
     begin.tv_usec = 999999;
     end.tv_sec = 1;
     end.tv_usec = 0;
-    uint64_t diff = diff_time_usec(end, &begin);
+    uint64_t diff = diff_time_usec(end, begin);
     printf("diff = %lu\n", diff);
 }
 

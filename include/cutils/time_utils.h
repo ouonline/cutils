@@ -28,7 +28,7 @@ static inline uint64_t gmtime2bjtime(uint64_t ts) {
     return ts + 28800;
 }
 
-uint64_t diff_time_usec(struct timeval end, const struct timeval* begin);
+uint64_t diff_time_usec(struct timeval end, struct timeval begin);
 
 #ifdef __cplusplus
 }
