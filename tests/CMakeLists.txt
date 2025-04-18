@@ -31,3 +31,6 @@ target_include_directories(test_robin_hood_hash PRIVATE ${xxhash_SOURCE_DIR})
 
 add_executable(test_avltree test_avltree.c)
 target_link_libraries(test_avltree PRIVATE cutils_static)
+
+add_executable(test_bst_perf test_bst_perf.c)
+target_link_libraries(test_bst_perf PRIVATE cutils_static)
