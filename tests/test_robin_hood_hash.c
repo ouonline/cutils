@@ -37,7 +37,7 @@ static void test_insert(struct robin_hood_hash* h, char** data) {
     }
     gettimeofday(&end, NULL);
     printf("insert ends...\ninserting [%u]([%u] valid) strings costs [%lf] ms.\n",
-           N, robin_hood_hash_size(h), (double)diff_time_usec(end, &begin) / 1000);
+           N, robin_hood_hash_size(h), (double)diff_time_usec(end, begin) / 1000);
 }
 
 static void test_lookup(struct robin_hood_hash* h, char** data) {
@@ -47,7 +47,7 @@ static void test_lookup(struct robin_hood_hash* h, char** data) {
         assert(robin_hood_hash_lookup(h, data[i - 1]) != NULL);
     }
     gettimeofday(&end, NULL);
-    printf("lookup [%u] costs %lf ms.\n", N, (double)diff_time_usec(end, &begin) / 1000);
+    printf("lookup [%u] costs %lf ms.\n", N, (double)diff_time_usec(end, begin) / 1000);
 }
 
 static void test_remove(struct robin_hood_hash* h, char** data) {
