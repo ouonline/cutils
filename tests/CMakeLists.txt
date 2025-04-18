@@ -28,3 +28,6 @@ target_link_libraries(test_cvector PRIVATE cutils_static)
 add_executable(test_robin_hood_hash test_robin_hood_hash.c)
 target_link_libraries(test_robin_hood_hash PRIVATE cutils_static)
 target_include_directories(test_robin_hood_hash PRIVATE ${xxhash_SOURCE_DIR})
+
+add_executable(test_avltree test_avltree.c)
+target_link_libraries(test_avltree PRIVATE cutils_static)
