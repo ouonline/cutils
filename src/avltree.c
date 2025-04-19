@@ -45,6 +45,9 @@ void avl_destroy(struct avl_root* root, void (*del_func)(struct avl_node*)) {
 
 /* ------------------------------------------------------------------------- */
 
+#define AVL_LEFT 0
+#define AVL_RIGHT 1
+
 static int avl_balance_factor(struct avl_node* node) {
     return (int)(node->parent_balance & 3) - 1;
 }
@@ -74,7 +77,7 @@ static int do_rotate(struct avl_node* node, struct avl_root* root, int node_bf) 
              *       | rl |    | rr |       | l |  | rl |
              *       +----+    +----+       +---+  +----+
              */
-            bst_rotate_left(node, root);
+            bst_rotate(node, root, AVL_LEFT);
             if (r_bf == 0) {
                 avl_set_balance_factor(node, 1);
                 avl_set_balance_factor(r, -1);
@@ -105,8 +108,8 @@ static int do_rotate(struct avl_node* node, struct avl_root* root, int node_bf) 
          */
         struct avl_node* rl = r->left;
         int rl_bf = avl_balance_factor(rl);
-        bst_rotate_right(r, root);
-        bst_rotate_left(node, root);
+        bst_rotate(r, root, AVL_RIGHT);
+        bst_rotate(node, root, AVL_LEFT);
         if (rl_bf == 1) {
             avl_set_balance_factor(node, -1);
             avl_set_balance_factor(r, 0);
@@ -139,7 +142,7 @@ static int do_rotate(struct avl_node* node, struct avl_root* root, int node_bf) 
          *  | ll |   | lr |                       | lr |     | r |
          *  +----+   +----+                       +----+     +---+
          */
-        bst_rotate_right(node, root);
+        bst_rotate(node, root, AVL_RIGHT);
         if (l_bf == 0) {
             avl_set_balance_factor(node, -1);
             avl_set_balance_factor(l, 1);
@@ -170,8 +173,8 @@ static int do_rotate(struct avl_node* node, struct avl_root* root, int node_bf) 
      */
     struct avl_node* lr = l->right;
     int lr_bf = avl_balance_factor(lr);
-    bst_rotate_left(l, root);
-    bst_rotate_right(node, root);
+    bst_rotate(l, root, AVL_LEFT);
+    bst_rotate(node, root, AVL_RIGHT);
     if (lr_bf == -1) {
         avl_set_balance_factor(node, 1);
         avl_set_balance_factor(l, 0);

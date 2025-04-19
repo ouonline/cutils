@@ -1,13 +1,6 @@
 #ifndef __CUTILS_BST_COMMON_TEMPLATE_H__
 #define __CUTILS_BST_COMMON_TEMPLATE_H__
 
-#define swap(x, y)           \
-    do {                     \
-        typeof(x) tmp = (x); \
-        (x) = (y);           \
-        (y) = tmp;           \
-    } while (0)
-
 /*
  *     px             px              px          px
  *     |              |               |           |
@@ -17,8 +10,7 @@
  *      / \        / \             / \             / \
  *    yl   yr    xl   yl         yl   yr          yr  xr
  */
-// TODO remove inline
-static inline void bst_rotate(BST_NODE_TYPE* x, BST_ROOT_TYPE* root, int direction) {
+static void bst_rotate(BST_NODE_TYPE* x, BST_ROOT_TYPE* root, int direction) {
     int opposite = 1 - direction;
     BST_NODE_TYPE* y = x->child[opposite];
     BST_NODE_TYPE* px = BST_GET_PARENT(x);
@@ -36,66 +28,6 @@ static inline void bst_rotate(BST_NODE_TYPE* x, BST_ROOT_TYPE* root, int directi
     }
 
     y->child[direction] = x;
-    BST_SET_PARENT(x, y);
-}
-
-/*
- *     x              y
- *    / \            / \
- *  xl   y    =>    x   yr
- *      / \        / \
- *    yl   yr    xl   yl
- */
-static void bst_rotate_left(BST_NODE_TYPE* x, BST_ROOT_TYPE* root) {
-    BST_NODE_TYPE *y = x->right, *px = BST_GET_PARENT(x);
-
-    x->right = y->left;
-    BST_SET_PARENT(y, px);
-    if (y->left) {
-        BST_SET_PARENT(y->left, x);
-    }
-
-    if (px) {
-        if (x == px->left) {
-            px->left = y;
-        } else {
-            px->right = y;
-        }
-    } else {
-        root->node = y;
-    }
-
-    y->left = x;
-    BST_SET_PARENT(x, y);
-}
-
-/*
- *       x           y
- *      / \         / \
- *     y   xr  =>  yl  x
- *    / \             / \
- *  yl   yr          yr  xr
- */
-static void bst_rotate_right(BST_NODE_TYPE* x, BST_ROOT_TYPE* root) {
-    BST_NODE_TYPE *y = x->left, *px = BST_GET_PARENT(x);
-
-    x->left = y->right;
-    BST_SET_PARENT(y, px);
-    if (y->right) {
-        BST_SET_PARENT(y->right, x);
-    }
-
-    if (px) {
-        if (x == px->left) {
-            px->left = y;
-        } else {
-            px->right = y;
-        }
-    } else {
-        root->node = y;
-    }
-
-    y->right = x;
     BST_SET_PARENT(x, y);
 }
 
