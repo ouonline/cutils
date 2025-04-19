@@ -117,8 +117,8 @@ struct rb_node* rb_insert(struct rb_node* node, struct rb_root* root,
 }
 
 static void rb_delete_rebalance(struct rb_node* node,
-                                       struct rb_node* parent,
-                                       struct rb_root* root) {
+                                struct rb_node* parent,
+                                struct rb_root* root) {
     while ((!node || rb_is_black(node)) && (node != root->node)) {
         struct rb_node* sibling;
 
