@@ -179,13 +179,13 @@ void rb_delete(struct rb_node* node, struct rb_root* root) {
             root->node = node;
         }
 
-        child = node->right;
         parent = rb_parent(node);
         color = rb_color(node);
 
         if (parent == old) {
             parent = node;
         } else {
+            child = node->right;
             if (child) {
                 rb_set_parent(child, parent);
             }
