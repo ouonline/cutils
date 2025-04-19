@@ -8,10 +8,15 @@ static void avl_set_parent(struct avl_node* node, struct avl_node* parent) {
     node->parent_balance = (node->parent_balance & 3) | (unsigned long)parent;
 }
 
+static int avl_direction(struct avl_node* node, struct avl_node* parent) {
+    return (node == parent->child[AVL_RIGHT]);
+}
+
 #define BST_NODE_TYPE struct avl_node
 #define BST_ROOT_TYPE struct avl_root
 #define BST_GET_PARENT avl_parent
 #define BST_SET_PARENT avl_set_parent
+#define BST_DIRECTION avl_direction
 #include "bst_common_template.h"
 
 /* ------------------------------------------------------------------------- */

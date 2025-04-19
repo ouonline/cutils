@@ -3,6 +3,11 @@
 
 #include "utils.h"
 
+enum {
+    AVL_LEFT,
+    AVL_RIGHT,
+};
+
 struct
 #ifdef _MSC_VER
 __declspec(align(8))
@@ -15,7 +20,13 @@ avl_node {
       which is in range [-1, 1] and mapped to [0, 2] by adding 1.
     */
     unsigned long parent_balance;
-    struct avl_node *left, *right;
+    union {
+        struct {
+            struct avl_node* left;
+            struct avl_node* right;
+        };
+        struct avl_node* child[2];
+    };
 };
 
 struct avl_root {

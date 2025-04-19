@@ -2,6 +2,34 @@
 #define __CUTILS_BST_COMMON_TEMPLATE_H__
 
 /*
+ *     x              y               x           y
+ *    / \            / \             / \         / \
+ *  xl   y    =>    x   yr   or     y   xr  =>  yl  x
+ *      / \        / \             / \             / \
+ *    yl   yr    xl   yl         yl   yr          yr  xr
+ */
+// TODO remove inline
+static inline void bst_rotate(BST_NODE_TYPE* x, BST_ROOT_TYPE* root, int direction) {
+    int opposite = 1 - direction;
+    BST_NODE_TYPE* y = x->child[opposite];
+    BST_NODE_TYPE* px = BST_GET_PARENT(x);
+    x->child[opposite] = y->child[direction];
+    BST_SET_PARENT(y, px);
+    if (y->child[direction]) {
+        BST_SET_PARENT(y->child[direction], x);
+    }
+
+    if (px) {
+        px->child[BST_DIRECTION(x, px)] = y;
+    } else {
+        root->node = y;
+    }
+
+    y->child[direction] = x;
+    BST_SET_PARENT(x, y);
+}
+
+/*
  *     x              y
  *    / \            / \
  *  xl   y    =>    x   yr

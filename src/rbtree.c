@@ -8,10 +8,15 @@ static void rb_set_parent(struct rb_node* node, struct rb_node* parent) {
     node->parent_color = (node->parent_color & 1) | (unsigned long)parent;
 }
 
+static int rb_direction(struct rb_node* node, struct rb_node* parent) {
+    return (node == parent->child[RB_RIGHT]);
+}
+
 #define BST_NODE_TYPE struct rb_node
 #define BST_ROOT_TYPE struct rb_root
 #define BST_GET_PARENT rb_parent
 #define BST_SET_PARENT rb_set_parent
+#define BST_DIRECTION rb_direction
 #include "bst_common_template.h"
 
 /* ------------------------------------------------------------------------- */
@@ -57,55 +62,32 @@ static void rb_set_color(struct rb_node* node, int color) {
 #define rb_set_black(node)          ((node)->parent_color |= 1)
 
 void rb_insert_rebalance(struct rb_node* node, struct rb_root* root) {
-    struct rb_node *parent, *gparent, *uncle;
+    // TODO
+    struct rb_node* parent;
 
     while ((parent = rb_parent(node)) && rb_is_red(parent)) {
-        gparent = rb_parent(parent);
+        struct rb_node* gparent = rb_parent(parent);
+        int direction = rb_direction(parent, gparent);
+        int opposite = 1 - direction;
+        struct rb_node* uncle = gparent->child[opposite];
 
-        if (parent == gparent->left) {
-            uncle = gparent->right;
-            if (uncle && rb_is_red(uncle)) {
-                rb_set_black(uncle);
-                rb_set_black(parent);
-                rb_set_red(gparent);
-                node = gparent;
-                continue;
-            }
-
-            if (node == parent->right) {
-                struct rb_node* tmp;
-                bst_rotate_left(parent, root);
-                tmp = node;
-                node = parent;
-                parent = tmp;
-            }
-
-            bst_rotate_right(gparent, root);
-            rb_set_black(parent);
-            rb_set_red(gparent);
-            continue;
-        }
-
-        uncle = gparent->left;
         if (uncle && rb_is_red(uncle)) {
-            rb_set_black(parent);
             rb_set_black(uncle);
+            rb_set_black(parent);
             rb_set_red(gparent);
             node = gparent;
             continue;
         }
 
-        if (node == parent->left) {
-            struct rb_node* tmp;
-            bst_rotate_right(parent, root);
-            tmp = node;
-            node = parent;
-            parent = tmp;
+        if (node == parent->child[opposite]) {
+            bst_rotate(parent, root, direction);
+            // swap_node();
         }
 
-        bst_rotate_left(gparent, root);
-        rb_set_red(gparent);
+        bst_rotate(gparent, root, opposite);
         rb_set_black(parent);
+        rb_set_red(gparent);
+        return;
     }
 
     rb_set_black(root->node);
@@ -135,8 +117,8 @@ struct rb_node* rb_insert(struct rb_node* node, struct rb_root* root,
 }
 
 static void rb_delete_rebalance(struct rb_node* node,
-                                struct rb_node* parent,
-                                struct rb_root* root) {
+                                       struct rb_node* parent,
+                                       struct rb_root* root) {
     while ((!node || rb_is_black(node)) && (node != root->node)) {
         struct rb_node* sibling;
 

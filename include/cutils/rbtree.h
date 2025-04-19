@@ -5,6 +5,11 @@
 
 #include "utils.h"
 
+enum {
+    RB_LEFT,
+    RB_RIGHT,
+};
+
 struct
 #ifdef _MSC_VER
 __declspec(align(8))
@@ -13,7 +18,13 @@ __attribute__((aligned(sizeof(long))))
 #endif
 rb_node {
     unsigned long parent_color;
-    struct rb_node *left, *right;
+    union {
+        struct {
+            struct rb_node* left;
+            struct rb_node* right;
+        };
+        struct rb_node* child[2];
+    };
 };
 
 struct rb_root {
