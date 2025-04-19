@@ -1,7 +1,16 @@
 #ifndef __CUTILS_BST_COMMON_TEMPLATE_H__
 #define __CUTILS_BST_COMMON_TEMPLATE_H__
 
+#define swap(x, y)           \
+    do {                     \
+        typeof(x) tmp = (x); \
+        (x) = (y);           \
+        (y) = tmp;           \
+    } while (0)
+
 /*
+ *     px             px              px          px
+ *     |              |               |           |
  *     x              y               x           y
  *    / \            / \             / \         / \
  *  xl   y    =>    x   yr   or     y   xr  =>  yl  x
@@ -13,6 +22,7 @@ static inline void bst_rotate(BST_NODE_TYPE* x, BST_ROOT_TYPE* root, int directi
     int opposite = 1 - direction;
     BST_NODE_TYPE* y = x->child[opposite];
     BST_NODE_TYPE* px = BST_GET_PARENT(x);
+
     x->child[opposite] = y->child[direction];
     BST_SET_PARENT(y, px);
     if (y->child[direction]) {

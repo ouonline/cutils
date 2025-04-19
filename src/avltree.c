@@ -9,7 +9,7 @@ static void avl_set_parent(struct avl_node* node, struct avl_node* parent) {
 }
 
 static int avl_direction(struct avl_node* node, struct avl_node* parent) {
-    return (node == parent->child[AVL_RIGHT]);
+    return (node == parent->right);
 }
 
 #define BST_NODE_TYPE struct avl_node
@@ -18,8 +18,6 @@ static int avl_direction(struct avl_node* node, struct avl_node* parent) {
 #define BST_SET_PARENT avl_set_parent
 #define BST_DIRECTION avl_direction
 #include "bst_common_template.h"
-
-/* ------------------------------------------------------------------------- */
 
 struct avl_node* avl_root(struct avl_node* node) {
     return bst_root(node);
@@ -44,6 +42,8 @@ struct avl_node* avl_prev(struct avl_node* node) {
 void avl_destroy(struct avl_root* root, void (*del_func)(struct avl_node*)) {
     return bst_destroy(root, del_func);
 }
+
+/* ------------------------------------------------------------------------- */
 
 static int avl_balance_factor(struct avl_node* node) {
     return (int)(node->parent_balance & 3) - 1;

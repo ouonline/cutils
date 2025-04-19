@@ -5,11 +5,6 @@
 
 #include "utils.h"
 
-enum {
-    RB_LEFT,
-    RB_RIGHT,
-};
-
 struct
 #ifdef _MSC_VER
 __declspec(align(8))

@@ -3,11 +3,6 @@
 
 #include "utils.h"
 
-enum {
-    AVL_LEFT,
-    AVL_RIGHT,
-};
-
 struct
 #ifdef _MSC_VER
 __declspec(align(8))
