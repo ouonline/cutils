@@ -4,9 +4,9 @@
 /*
  *     px             px              px          px
  *     |              |               |           |
- *     x              y               x           y
+ *     x              y      or       x           y
  *    / \            / \             / \         / \
- *  xl   y    =>    x   yr   or     y   xr  =>  yl  x
+ *  xl   y    =>    x   yr          y   xr  =>  yl  x
  *      / \        / \             / \             / \
  *    yl   yr    xl   yl         yl   yr          yr  xr
  */
