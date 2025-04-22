@@ -101,34 +101,33 @@ static BST_NODE_TYPE* bst_prev(BST_NODE_TYPE* node) {
     return parent;
 }
 
-static void bst_null_del(BST_NODE_TYPE* nil) {
+static void bst_null_del(BST_NODE_TYPE* nil, void* arg) {
     (void)nil;
+    (void)arg;
 }
 
-static void bst_destroy(BST_ROOT_TYPE* root, void (*del_func)(BST_NODE_TYPE*)) {
-    BST_NODE_TYPE* node = root->node;
-
+/* use parent pointer as the next pointer for stack */
+static void bst_destroy(BST_ROOT_TYPE* root, void* arg,
+                        void (*del_func)(BST_NODE_TYPE*, void*)) {
     if (!del_func) {
         del_func = bst_null_del;
     }
 
-    while (node) {
-        if (node->left) {
-            node = node->left;
-        } else if (node->right) {
-            node = node->right;
-        } else {
-            BST_NODE_TYPE* tmp = node;
-            node = BST_GET_PARENT(node);
-            if (node) {
-                if (tmp == node->left) {
-                    node->left = NULL;
-                } else {
-                    node->right = NULL;
-                }
+    BST_NODE_TYPE* head = root->node;
+    while (head) {
+        /* pops one node */
+        BST_NODE_TYPE* current = head;
+        head = BST_GET_PARENT(head);
+        do {
+            /* pushes the right node to stack */
+            if (current->right) {
+                BST_SET_PARENT(current->right, head);
+                head = current->right;
             }
-            del_func(tmp);
-        }
+            BST_NODE_TYPE* left = current->left;
+            del_func(current, arg);
+            current = left;
+        } while (current);
     }
 
     root->node = NULL;

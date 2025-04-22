@@ -34,8 +34,9 @@ struct rb_node* rb_prev(struct rb_node* node) {
     return bst_prev(node);
 }
 
-void rb_destroy(struct rb_root* root, void (*del_func)(struct rb_node*)) {
-    bst_destroy(root, del_func);
+void rb_destroy(struct rb_root* root, void* arg,
+                void (*del_func)(struct rb_node*, void*)) {
+    bst_destroy(root, arg, del_func);
 }
 
 /* ------------------------------------------------------------------------- */

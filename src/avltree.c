@@ -34,8 +34,9 @@ struct avl_node* avl_prev(struct avl_node* node) {
     return bst_prev(node);
 }
 
-void avl_destroy(struct avl_root* root, void (*del_func)(struct avl_node*)) {
-    bst_destroy(root, del_func);
+void avl_destroy(struct avl_root* root, void* arg,
+                 void (*del_func)(struct avl_node*, void*)) {
+    bst_destroy(root, arg, del_func);
 }
 
 /* ------------------------------------------------------------------------- */

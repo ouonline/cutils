@@ -34,7 +34,7 @@ static inline void rb_init(struct rb_root* root) {
     root->node = NULL;
 }
 
-void rb_destroy(struct rb_root* root, void (*del_func)(struct rb_node*));
+void rb_destroy(struct rb_root*, void*, void (*del_func)(struct rb_node*, void*));
 
 #define rb_empty(root) (!((root)->node))
 
@@ -50,15 +50,15 @@ static inline void rb_link_node(struct rb_node* node, struct rb_node* parent,
 void rb_insert_rebalance(struct rb_node* node, struct rb_root* root);
 
 /* returns the newly inserted node if ok, or the existing one if fails */
-struct rb_node* rb_insert(struct rb_node* node, struct rb_root* root,
+struct rb_node* rb_insert(struct rb_node*, struct rb_root*,
                           int (*cmp_func)(struct rb_node*, struct rb_node*));
 
-void rb_delete(struct rb_node* node, struct rb_root* root);
+void rb_delete(struct rb_node*, struct rb_root*);
 
-struct rb_node* rb_root(struct rb_node* node);
-struct rb_node* rb_first(struct rb_root* root);
-struct rb_node* rb_last(struct rb_root* root);
-struct rb_node* rb_next(struct rb_node* node);
-struct rb_node* rb_prev(struct rb_node* node);
+struct rb_node* rb_root(struct rb_node*);
+struct rb_node* rb_first(struct rb_root*);
+struct rb_node* rb_last(struct rb_root*);
+struct rb_node* rb_next(struct rb_node*);
+struct rb_node* rb_prev(struct rb_node*);
 
 #endif

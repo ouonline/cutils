@@ -102,7 +102,7 @@ static int cmp_func(struct avl_node* a, struct avl_node* b) {
     return (ta->val - tb->val);
 }
 
-static void destroy_func(struct avl_node* node) {
+static void destroy_func(struct avl_node* node, void* unused) {
     struct test_data* data = avl_entry(node, struct test_data, node);
     free(data);
 }
@@ -149,7 +149,7 @@ static void test_insert_rotate_left() {
     int values2[] = {3};
     __insert_and_check(&tree, values2, "2[0],1[0],3[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_insert_rotate_right() {
@@ -163,7 +163,7 @@ static void test_insert_rotate_right() {
     int values2[] = {1};
     __insert_and_check(&tree, values2, "2[0],1[0],3[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_insert_rotate_leftright() {
@@ -177,7 +177,7 @@ static void test_insert_rotate_leftright() {
     int values2[] = {2};
     __insert_and_check(&tree, values2, "2[0],1[0],3[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_insert_rotate_rightleft() {
@@ -191,7 +191,7 @@ static void test_insert_rotate_rightleft() {
     int values2[] = {2};
     __insert_and_check(&tree, values2, "2[0],1[0],3[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_insert_norotate() {
@@ -203,7 +203,7 @@ static void test_insert_norotate() {
     int values2[] = {3};
     __insert_and_check(&tree, values2, "2[0],1[0],3[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 #define __delete_and_check(root, val, expected_str)                                  \
@@ -228,7 +228,7 @@ static void test_delete_rotate_left() {
     __insert_and_check(&tree, values, "4[1],2[0],6[1],1[0],3[0],5[0],7[1],,,,,,,,8[0]");
     __delete_and_check(&tree, 5, "4[0],2[0],7[0],1[0],3[0],6[0],8[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_rotate_right() {
@@ -238,7 +238,7 @@ static void test_delete_rotate_right() {
     __insert_and_check(&tree, values, "5[-1],3[-1],7[0],2[-1],4[0],6[0],8[0],1[0]");
     __delete_and_check(&tree, 4, "5[0],2[0],7[0],1[0],3[0],6[0],8[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_rotate_leftright() {
@@ -248,7 +248,7 @@ static void test_delete_rotate_leftright() {
     __insert_and_check(&tree, values, "6[-1],3[1],8[0],,4[0]");
     __delete_and_check(&tree, 8, "4[0],3[0],6[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_rotate_rightleft() {
@@ -258,7 +258,7 @@ static void test_delete_rotate_rightleft() {
     __insert_and_check(&tree, values, "6[1],3[0],8[-1],,,7[0]");
     __delete_and_check(&tree, 3, "7[0],6[0],8[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_norotate() {
@@ -268,7 +268,7 @@ static void test_delete_norotate() {
     __insert_and_check(&tree, values, "4[1],2[0],6[1],1[0],3[0],5[0],7[1],,,,,,,,8[0]");
     __delete_and_check(&tree, 8, "4[0],2[0],6[0],1[0],3[0],5[0],7[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_rotate_sibling() {
@@ -278,7 +278,7 @@ static void test_delete_rotate_sibling() {
     __insert_and_check(&tree, values, "7[-1],3[0],9[0],1[0],4[0]");
     __delete_and_check(&tree, 9, "3[1],1[0],7[-1],,,4[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_non_leaf() {
@@ -288,7 +288,7 @@ static void test_delete_non_leaf() {
     __insert_and_check(&tree, values, "4[1],2[0],6[1],1[0],3[0],5[0],7[1],,,,,,,,8[0]");
     __delete_and_check(&tree, 4, "5[0],2[0],7[0],1[0],3[0],6[0],8[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_bugfix0() {
@@ -298,7 +298,7 @@ static void test_delete_bugfix0() {
     __insert_and_check(&tree, values, "7[-1],3[0],9[1],1[1],5[0],,10[0],,2[0],4[0],6[0]");
     __delete_and_check(&tree, 7, "3[1],1[1],9[-1],,2[0],5[0],10[0],,,4[0],6[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_all() {
@@ -314,7 +314,7 @@ static void test_delete_all() {
         free(data);
     }
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_shorter_subtree() {
@@ -324,7 +324,7 @@ static void test_delete_shorter_subtree() {
     __insert_and_check(&tree, values, "12[1],4[0],19[-1],2[1],7[0],16[1],22[-1],,3[0],5[0],9[0],13[0],17[1],20[0],,,,,,,,,,,18[0]");
     __delete_and_check(&tree, 13, "12[0],4[0],19[0],2[1],7[0],17[0],22[-1],,3[0],5[0],9[0],16[0],18[0],20[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_rl_another_tree() {
@@ -334,7 +334,7 @@ static void test_delete_rl_another_tree() {
     __insert_and_check(&tree, values, "12[1],7[-1],28[-1],5[0],,13[1],33[0],,,,14[0]");
     __delete_and_check(&tree, 7, "13[0],12[-1],28[0],5[0],,14[0],33[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 static void test_delete_rotate_left2() {
@@ -344,7 +344,7 @@ static void test_delete_rotate_left2() {
     __insert_and_check(&tree, values, "20[1],13[0],35[-1],8[0],15[0],32[1],39[1],1[0],9[0],14[0],16[0],29[0],33[1],,40[0],,,,,,,,,,,,34[0]");
     __delete_and_check(&tree, 39, "20[0],13[0],33[0],8[0],15[0],32[-1],35[0],1[0],9[0],14[0],16[0],29[0],,34[0],40[0]");
 
-    avl_destroy(&tree, destroy_func);
+    avl_destroy(&tree, NULL, destroy_func);
 }
 
 #define TEST_ITEM(item) {#item, item}

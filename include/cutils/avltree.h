@@ -34,7 +34,7 @@ static inline void avl_init(struct avl_root* root) {
     root->node = NULL;
 }
 
-void avl_destroy(struct avl_root*, void (*del_func)(struct avl_node*));
+void avl_destroy(struct avl_root*, void*, void (*del_func)(struct avl_node*, void*));
 
 #define avl_empty(root) (!(root)->node)
 
