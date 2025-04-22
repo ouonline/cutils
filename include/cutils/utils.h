@@ -20,8 +20,15 @@ static inline uint64_t upper(uint64_t size, uint64_t n) {
     return ((size + n - 1) / n);
 }
 
-#define container_of(ptr, type, member)                         \
+#define container_of(ptr, type, member)                      \
     ((type*)((unsigned long)(ptr) - offsetof(type, member)))
+
+#define swap_value(x, y)       \
+    do {                       \
+        typeof(x) _tmp_ = (x); \
+        (x) = (y);             \
+        (y) = _tmp_;           \
+    } while (0)
 
 #ifdef __cplusplus
 }

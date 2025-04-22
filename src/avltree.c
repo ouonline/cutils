@@ -14,8 +14,6 @@ static void avl_set_parent(struct avl_node* node, struct avl_node* parent) {
 #define BST_SET_PARENT avl_set_parent
 #include "bst_common_template.h"
 
-/* ------------------------------------------------------------------------- */
-
 struct avl_node* avl_root(struct avl_node* node) {
     return bst_root(node);
 }
@@ -37,8 +35,10 @@ struct avl_node* avl_prev(struct avl_node* node) {
 }
 
 void avl_destroy(struct avl_root* root, void (*del_func)(struct avl_node*)) {
-    return bst_destroy(root, del_func);
+    bst_destroy(root, del_func);
 }
+
+/* ------------------------------------------------------------------------- */
 
 static int avl_balance_factor(struct avl_node* node) {
     return (int)(node->parent_balance & 3) - 1;
@@ -50,134 +50,105 @@ static void avl_set_balance_factor(struct avl_node* node, int bf) {
 
 /* returns 1 if the subtree becomes shorter */
 static int do_rotate(struct avl_node* node, struct avl_root* root, int node_bf) {
-    if (node_bf == 2) {
-        struct avl_node* r = node->right;
-        int r_bf = avl_balance_factor(r);
+    int direction = (node_bf > 0);
+    int opposite = 1 - direction;
+    struct avl_node* child = node->child[direction];
+    int child_bf = avl_balance_factor(child);
+    int child_subtree_is_leaning_opposite = (child_bf * node_bf < 0);
 
-        /* `r_bf` may be 0 if some node is removed on the left subtree of `node` */
-        if (r_bf >= 0) {
+    if (!child_subtree_is_leaning_opposite) {
+        /*
+         *     +---------+                        +-------------+
+         *     | node: 2 |                        | child: -1,0 |
+         *     +---------+                        +-------------+
+         *     /         \                          /         \
+         *  +---+   +------------+          +-----------+   +----+
+         *  | l |   | child: 0,1 |    ==>   | node: 0,1 |   | rr |
+         *  +---+   +------------+          +-----------+   +----+
+         *            /        \               /     \
+         *         +----+    +----+         +---+  +----+
+         *         | rl |    | rr |         | l |  | rl |
+         *         +----+    +----+         +---+  +----+
+         *
+         * or:
+         *
+         *          +----------+              +------------+
+         *          | node: -2 |              | child: 0,1 |
+         *          +----------+              +------------+
+         *          /          \                /        \
+         *  +-------------+   +---+          +----+   +------------+
+         *  | child: -1,0 |   | r |   ==>    | ll |   | node: -1,0 |
+         *  +-------------+   +---+          +----+   +------------+
+         *     /       \                                /        \
+         *  +----+   +----+                          +----+     +---+
+         *  | ll |   | lr |                          | lr |     | r |
+         *  +----+   +----+                          +----+     +---+
+         */
+        bst_rotate(node, root, opposite);
+
+        /* `child_bf` may be 0 if some node is removed on the subtree of `node`'s direction. */
+        if (child_bf == 0) {
             /*
-             *     +---------+                     +---------+
-             *     | node: 2 |                     | r: -1,0 |
-             *     +---------+                     +---------+
-             *     /         \                     /         \
-             *  +---+   +--------+          +-----------+   +----+
-             *  | l |   | r: 0,1 |    ==>   | node: 0,1 |   | rr |
-             *  +---+   +--------+          +-----------+   +----+
-             *          /        \             /     \
-             *       +----+    +----+       +---+  +----+
-             *       | rl |    | rr |       | l |  | rl |
-             *       +----+    +----+       +---+  +----+
-             */
-            bst_rotate_left(node, root);
-            if (r_bf == 0) {
-                avl_set_balance_factor(node, 1);
-                avl_set_balance_factor(r, -1);
-                return 0;
-            }
-
-            avl_set_balance_factor(node, 0);
-            avl_set_balance_factor(r, 0);
-            return 1;
-        }
-
-        /*
-         *      +---------+                  +------+                            +-------+
-         *      | node: 2 |                  | node |                            | rl: 0 |
-         *      +---------+                  +------+                            +-------+
-         *     /           \                 /      \                           /         \
-         *  +---+      +-------+          +---+    +----+            +------------+     +--------+
-         *  | l |      | r: -1 |    ==>   | l |    | rl |      ==>   | node: -1,0 |     | r: 0,1 |
-         *  +---+      +-------+          +---+    +----+            +------------+     +--------+
-         *              /     \                     /  \                /      \         /      \
-         *  +------------+   +----+          +-----+    +---+        +---+   +-----+  +-----+  +----+
-         *  | rl: -1,0,1 |   | rr |          | rll |    | r |        | l |   | rll |  | rlr |  | rr |
-         *  +------------+   +----+          +-----+    +---+        +---+   +-----+  +-----+  +----+
-         *      /        \                                 \
-         *   +-----+  +-----+                            +-----+
-         *   | rll |  | rlr |                            | rlr |
-         *   +-----+  +-----+                            +-----+
-         */
-        struct avl_node* rl = r->left;
-        int rl_bf = avl_balance_factor(rl);
-        bst_rotate_right(r, root);
-        bst_rotate_left(node, root);
-        if (rl_bf == 1) {
-            avl_set_balance_factor(node, -1);
-            avl_set_balance_factor(r, 0);
-        } else if (rl_bf == -1) {
-            avl_set_balance_factor(node, 0);
-            avl_set_balance_factor(r, 1);
-        } else /* rl_bf == 0 */ { /* deletion */
-            avl_set_balance_factor(node, 0);
-            avl_set_balance_factor(r, 0);
-        }
-        avl_set_balance_factor(rl, 0);
-        return 1;
-    }
-
-    struct avl_node* l = node->left;
-    int l_bf = avl_balance_factor(l);
-
-    /* `l_bf` may be 0 if some node is removed on the right subtree of `node` */
-    if (l_bf <= 0) {
-        /*
-         *         +----------+              +--------+
-         *         | node: -2 |              | l: 0,1 |
-         *         +----------+              +--------+
-         *         /          \              /        \
-         *    +---------+   +---+         +----+   +------------+
-         *    | l: -1,0 |   | r |   ==>   | ll |   | node: -1,0 |
-         *    +---------+   +---+         +----+   +------------+
-         *     /       \                             /        \
-         *  +----+   +----+                       +----+     +---+
-         *  | ll |   | lr |                       | lr |     | r |
-         *  +----+   +----+                       +----+     +---+
-         */
-        bst_rotate_right(node, root);
-        if (l_bf == 0) {
-            avl_set_balance_factor(node, -1);
-            avl_set_balance_factor(l, 1);
+              if the subtree of `child` is balanced before rotating, it will become
+              leaning after rotation.
+            */
+            int lean_bf = node_bf / 2;
+            avl_set_balance_factor(node, lean_bf);
+            avl_set_balance_factor(child, -lean_bf);
             return 0;
         }
 
         avl_set_balance_factor(node, 0);
-        avl_set_balance_factor(l, 0);
+        avl_set_balance_factor(child, 0);
         return 1;
     }
 
     /*
-     *           +----------+                    +------+                      +-------+
-     *           | node: -2 |                    | node |                      | lr: 0 |
-     *           +----------+                    +------+                      +-------+
-     *           /          \                    /      \                       /     \
-     *      +------+       +---+              +----+   +---+          +---------+     +-----------+
-     *      | l: 1 |       | r |     ==>      | lr |   | r |    ==>   | l: -1,0 |     | node: 0,1 |
-     *      +------+       +---+              +----+   +---+          +---------+     +-----------+
-     *     /        \                        /      \                  /       \         /      \
-     *  +----+    +------------+          +---+   +-----+          +----+   +-----+  +-----+   +---+
-     *  | ll |    | lr: -1,0,1 |          | l |   | lrr |          | ll |   | lrl |  | lrr |   | r |
-     *  +----+    +------------+          +---+   +-----+          +----+   +-----+  +-----+   +---+
-     *               /      \            /     \
-     *          +-----+    +-----+   +----+  +-----+
-     *          | lrl |    | lrr |   | ll |  | lrl |
-     *          +-----+    +-----+   +----+  +-----+
+     *        +---------+                     +------+                          +-----------+
+     *        | node: 2 |                     | node |                          | gchild: 0 |
+     *        +---------+                     +------+                          +-----------+
+     *         /       \                      /      \                           /         \
+     *      +---+   +-----------+          +---+  +--------+            +------------+   +------------+
+     *      | l |   | child: -1 |    ==>   | l |  | gchild |      ==>   | node: -1,0 |   | child: 0,1 |
+     *      +---+   +-----------+          +---+  +--------+            +------------+   +------------+
+     *                /        \                   /      \               /       \         /      \
+     *  +----------------+   +----+           +-----+  +-------+       +---+   +-----+   +-----+  +----+
+     *  | gchild: -1,0,1 |   | rr |           | rll |  | child |       | l |   | rll |   | rlr |  | rr |
+     *  +----------------+   +----+           +-----+  +-------+       +---+   +-----+   +-----+  +----+
+     *      /       \                                   /     \
+     *   +-----+  +-----+                          +-----+   +----+
+     *   | rll |  | rlr |                          | rlr |   | rr |
+     *   +-----+  +-----+                          +-----+   +----+
+     *
+     * or:
+     *
+     *         +----------+                           +------+                      +-----------+
+     *         | node: -2 |                           | node |                      | gchild: 0 |
+     *         +----------+                           +------+                      +-----------+
+     *          /        \                            /      \                        /     \
+     *   +----------+   +---+                  +--------+   +---+        +-------------+   +-----------+
+     *   | child: 1 |   | r |       ==>        | gchild |   | r |  ==>   | child: -1,0 |   | node: 0,1 |
+     *   +----------+   +---+                  +--------+   +---+        +-------------+   +-----------+
+     *     /      \                             /      \                   /       \         /       \
+     *  +----+  +----------------+        +-------+   +-----+           +----+  +-----+  +-----+   +---+
+     *  | ll |  | gchild: -1,0,1 |        | child |   | lrr |           | ll |  | lrl |  | lrr |   | r |
+     *  +----+  +----------------+        +-------+   +-----+           +----+  +-----+  +-----+   +---+
+     *               /      \              /     \
+     *          +-----+    +-----+     +----+  +-----+
+     *          | lrl |    | lrr |     | ll |  | lrl |
+     *          +-----+    +-----+     +----+  +-----+
      */
-    struct avl_node* lr = l->right;
-    int lr_bf = avl_balance_factor(lr);
-    bst_rotate_left(l, root);
-    bst_rotate_right(node, root);
-    if (lr_bf == -1) {
-        avl_set_balance_factor(node, 1);
-        avl_set_balance_factor(l, 0);
-    } else if (lr_bf == 1) {
-        avl_set_balance_factor(node, 0);
-        avl_set_balance_factor(l, -1);
-    } else /* lr_bf == 0 */ { /* deletion */
-        avl_set_balance_factor(node, 0);
-        avl_set_balance_factor(l, 0);
-    }
-    avl_set_balance_factor(lr, 0);
+    struct avl_node* gchild = child->child[opposite];
+    int gchild_bf = avl_balance_factor(gchild);
+    int gchild_subtree_is_leaning_opposite = (gchild_bf * node_bf < 0);
+
+    bst_rotate(child, root, direction);
+    bst_rotate(node, root, opposite);
+
+    avl_set_balance_factor(node, gchild_subtree_is_leaning_opposite ? 0 : -gchild_bf);
+    avl_set_balance_factor(child, gchild_subtree_is_leaning_opposite ? -gchild_bf : 0);
+    avl_set_balance_factor(gchild, 0);
+
     return 1;
 }
 

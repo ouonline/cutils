@@ -11,11 +11,17 @@ __attribute__((aligned(sizeof(long))))
 #endif
 avl_node {
     /*
-      Last 2 bits of the parent pointer is used to record this node's balance factor,
+      Last 2 bits of the parent pointer are used to record this node's balance factor,
       which is in range [-1, 1] and mapped to [0, 2] by adding 1.
     */
     unsigned long parent_balance;
-    struct avl_node *left, *right;
+    union {
+        struct {
+            struct avl_node* left;
+            struct avl_node* right;
+        };
+        struct avl_node* child[2];
+    };
 };
 
 struct avl_root {
@@ -27,6 +33,8 @@ struct avl_root {
 static inline void avl_init(struct avl_root* root) {
     root->node = NULL;
 }
+
+void avl_destroy(struct avl_root*, void (*del_func)(struct avl_node*));
 
 #define avl_empty(root) (!(root)->node)
 
@@ -52,6 +60,5 @@ struct avl_node* avl_first(struct avl_root*);
 struct avl_node* avl_last(struct avl_root*);
 struct avl_node* avl_next(struct avl_node*);
 struct avl_node* avl_prev(struct avl_node*);
-void avl_destroy(struct avl_root*, void (*del_func)(struct avl_node*));
 
 #endif
