@@ -5,7 +5,7 @@ static struct rb_node* rb_parent(const struct rb_node* node) {
 }
 
 static void rb_set_parent(struct rb_node* node, struct rb_node* parent) {
-    node->parent_color = (node->parent_color & 1) | (unsigned long)parent;
+    node->parent_color = (unsigned long)parent + (node->parent_color & 1);
 }
 
 #define BST_NODE_TYPE struct rb_node
@@ -165,11 +165,8 @@ void rb_delete(struct rb_node* node, struct rb_root* root) {
         }
 
         if (old_parent) {
-            if (old == old_parent->left) {
-                old_parent->left = node;
-            } else {
-                old_parent->right = node;
-            }
+            int direction = bst_direction(old, old_parent);
+            old_parent->child[direction] = node;
         } else {
             root->node = node;
         }
@@ -209,11 +206,8 @@ void rb_delete(struct rb_node* node, struct rb_root* root) {
     }
 
     if (parent) {
-        if (node == parent->left) {
-            parent->left = child;
-        } else {
-            parent->right = child;
-        }
+        int direction = bst_direction(node, parent);
+        parent->child[direction] = child;
     } else {
         root->node = child;
     }
