@@ -15,16 +15,17 @@ extern "C" {
 #endif
 
 /* str format: %d-%d-%d %d:%d:%d */
-uint64_t str2gmtime(const char* str);
+time_t str2gmtime(const char* str);
 
 /* str format: %04d-%02d-%02d %02d:%02d:%02d */
-char* gmtime2str(uint64_t timeval, char* buf);
+char* gmtime2str(time_t ts, char* buf);
+char* localtime2str(time_t ts, char* buf);
 
-static inline uint64_t bjtime2gmtime(uint64_t ts) {
+static inline time_t bjtime2gmtime(time_t ts) {
     return ts - 28800;
 }
 
-static inline uint64_t gmtime2bjtime(uint64_t ts) {
+static inline time_t gmtime2bjtime(time_t ts) {
     return ts + 28800;
 }
 

@@ -13,7 +13,7 @@ static void test_diff_time(void) {
 
 int main(void) {
     const char* s = "2020-03-04 05:06:07";
-    unsigned long ts;
+    time_t ts;
     char buf[20];
 
     ts = str2gmtime(s);
@@ -22,7 +22,7 @@ int main(void) {
     gmtime2str(ts, buf);
     printf("%lu -> %s\n", ts, buf);
 
-    unsigned long bjts = gmtime2bjtime(ts);
+    time_t bjts = gmtime2bjtime(ts);
     gmtime2str(bjts, buf);
     printf("bj time = %lu %s\n", bjts, buf);
 

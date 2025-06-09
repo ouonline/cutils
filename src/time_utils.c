@@ -7,7 +7,7 @@
  * mktime() implementation from kernel/time.c.
  * Converts Gregorian date to seconds since 1970-01-01 00:00:00.
  **/
-static uint64_t
+static time_t
 __mktime(const unsigned int year0, const unsigned int mon0,
          const unsigned int day, const unsigned int hour,
          const unsigned int min, const unsigned int sec) {
@@ -19,15 +19,14 @@ __mktime(const unsigned int year0, const unsigned int mon0,
         year -= 1;
     }
 
-    return ((((uint64_t)
-              (year/4 - year/100 + year/400 + 367*mon/12 + day) +
+    return ((((year/4 - year/100 + year/400 + 367*mon/12 + day) +
               year*365 - 719499
               )*24 + hour /* now have hours */
              )*60 + min /* now have minutes */
             )*60 + sec; /* finally seconds */
 }
 
-uint64_t str2gmtime(const char* time_str) {
+time_t str2gmtime(const char* time_str) {
     int year, mon, day, hour, min, sec;
 
     sscanf(time_str, "%d-%d-%d %d:%d:%d", &year, &mon, &day,
@@ -36,13 +35,25 @@ uint64_t str2gmtime(const char* time_str) {
     return __mktime(year, mon, day, hour, min, sec);
 }
 
-char* gmtime2str(uint64_t ts, char* buf) {
+char* gmtime2str(time_t ts, char* buf) {
     struct tm tm;
-    time_t tt = ts;
 #ifdef _MSC_VER
-    gmtime_s(&tm, &tt);
+    gmtime_s(&tm, &ts);
 #else
-    gmtime_r(&tt, &tm);
+    gmtime_r(&ts, &tm);
+#endif
+    sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d",
+            tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+            tm.tm_hour, tm.tm_min, tm.tm_sec);
+    return buf;
+}
+
+char* localtime2str(time_t ts, char* buf) {
+    struct tm tm;
+#ifdef _MSC_VER
+    localtime_s(&tm, &ts);
+#else
+    localtime_r(&ts, &tm);
 #endif
     sprintf(buf, "%04d-%02d-%02d %02d:%02d:%02d",
             tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
