@@ -15,19 +15,13 @@ extern "C" {
 #endif
 
 /* str format: %d-%d-%d %d:%d:%d */
-time_t str2gmtime(const char* str);
+time_t str2time(const char* str);
 
-/* str format: %04d-%02d-%02d %02d:%02d:%02d */
-char* gmtime2str(time_t ts, char* buf);
-char* localtime2str(time_t ts, char* buf);
-
-static inline time_t bjtime2gmtime(time_t ts) {
-    return ts - 28800;
-}
-
-static inline time_t gmtime2bjtime(time_t ts) {
-    return ts + 28800;
-}
+/*
+  str format: %04d-%02d-%02d %02d:%02d:%02d
+  returns the number of bytes written to `buf`.
+*/
+uint32_t time2str(time_t, char* buf);
 
 uint64_t diff_time_usec(struct timeval end, struct timeval begin);
 

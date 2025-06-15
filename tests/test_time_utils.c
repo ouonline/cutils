@@ -1,5 +1,9 @@
 #include <stdio.h>
 #include "cutils/time_utils.h"
+#include <string.h>
+
+#undef NDEBUG
+#include <assert.h>
 
 static void test_diff_time(void) {
     struct timeval begin, end;
@@ -8,25 +12,24 @@ static void test_diff_time(void) {
     end.tv_sec = 1;
     end.tv_usec = 0;
     uint64_t diff = diff_time_usec(end, begin);
-    printf("diff = %lu\n", diff);
+    assert(diff == 1);
+}
+
+static void test_time_str(void) {
+    const char* s = "2020-03-04 05:06:07";
+    time_t ts, ts2;
+    char buf[32];
+
+    ts = str2time(s);
+    time2str(ts, buf);
+    assert(strcmp(s, buf) == 0);
+
+    ts2 = str2time(buf);
+    assert(ts == ts2);
 }
 
 int main(void) {
-    const char* s = "2020-03-04 05:06:07";
-    time_t ts;
-    char buf[20];
-
-    ts = str2gmtime(s);
-    printf("%s -> %lu\n", s, ts);
-
-    gmtime2str(ts, buf);
-    printf("%lu -> %s\n", ts, buf);
-
-    time_t bjts = gmtime2bjtime(ts);
-    gmtime2str(bjts, buf);
-    printf("bj time = %lu %s\n", bjts, buf);
-
+    test_time_str();
     test_diff_time();
-
     return 0;
 }
