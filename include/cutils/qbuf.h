@@ -77,8 +77,12 @@ int qbuf_equal(const struct qbuf* a, const struct qbuf* b);
 
 #include "qbuf_ref.h"
 
-static inline const struct qbuf_ref* qbuf_get_ref(const struct qbuf* q) {
-    return (const struct qbuf_ref*)q;
+static inline struct qbuf_ref qbuf_get_ref(const struct qbuf* q) {
+    const struct qbuf_ref ref = {
+        .base = q->__base__,
+        .size = q->__size__,
+    };
+    return ref;
 }
 
 #ifdef __cplusplus

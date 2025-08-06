@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 struct qbuf_ref {
-    const void* base;
+    void* base;
     unsigned long size;
 };
 
