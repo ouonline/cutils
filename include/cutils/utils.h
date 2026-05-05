@@ -21,7 +21,7 @@ static inline uint64_t upper(uint64_t size, uint64_t n) {
 }
 
 #define container_of(ptr, type, member)                      \
-    ((type*)((unsigned long)(ptr) - offsetof(type, member)))
+    ((type*)((uintptr_t)(ptr) - offsetof(type, member)))
 
 #define swap_value(x, y)       \
     do {                       \

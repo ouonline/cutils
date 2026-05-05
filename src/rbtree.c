@@ -5,7 +5,7 @@ static struct rb_node* rb_parent(const struct rb_node* node) {
 }
 
 static void rb_set_parent(struct rb_node* node, struct rb_node* parent) {
-    node->parent_color = (unsigned long)parent + (node->parent_color & 1);
+    node->parent_color = (uintptr_t)parent + (node->parent_color & 1);
 }
 
 #define BST_NODE_TYPE struct rb_node

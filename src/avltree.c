@@ -5,7 +5,7 @@ static struct avl_node* avl_parent(const struct avl_node* node) {
 }
 
 static void avl_set_parent(struct avl_node* node, struct avl_node* parent) {
-    node->parent_balance = (unsigned long)parent + (node->parent_balance & 3);
+    node->parent_balance = (uintptr_t)parent + (node->parent_balance & 3);
 }
 
 #define BST_NODE_TYPE struct avl_node

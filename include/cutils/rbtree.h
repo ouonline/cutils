@@ -7,14 +7,14 @@ struct
 #ifdef _MSC_VER
 __declspec(align(8))
 #else
-__attribute__((aligned(sizeof(long))))
+__attribute__((aligned(sizeof(uintptr_t))))
 #endif
 rb_node {
     /*
       Last bit of the parent pointer is used to record this node's color,
       0 for red and 1 for black.
     */
-    unsigned long parent_color;
+    uintptr_t parent_color;
     union {
         struct {
             struct rb_node* left;
@@ -42,7 +42,7 @@ void rb_destroy(struct rb_root*, void*, void (*del_func)(struct rb_node*, void*)
 
 static inline void rb_link_node(struct rb_node* node, struct rb_node* parent,
                                 struct rb_node** link) {
-    node->parent_color = (unsigned long)parent;
+    node->parent_color = (uintptr_t)parent;
     node->left = node->right = NULL;
     *link = node;
 }

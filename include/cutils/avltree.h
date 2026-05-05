@@ -7,14 +7,14 @@ struct
 #ifdef _MSC_VER
 __declspec(align(8))
 #else
-__attribute__((aligned(sizeof(long))))
+__attribute__((aligned(sizeof(uintptr_t))))
 #endif
 avl_node {
     /*
       Last 2 bits of the parent pointer are used to record this node's balance factor,
       which is in range [-1, 1] and mapped to [0, 2] by adding 1.
     */
-    unsigned long parent_balance;
+    uintptr_t parent_balance;
     union {
         struct {
             struct avl_node* left;
@@ -42,7 +42,7 @@ void avl_destroy(struct avl_root*, void*, void (*del_func)(struct avl_node*, voi
 
 static inline void avl_link_node(struct avl_node* node, struct avl_node* parent,
                                  struct avl_node** link) {
-    node->parent_balance = (unsigned long)parent | 1;
+    node->parent_balance = (uintptr_t)parent | 1;
     node->left = node->right = NULL;
     *link = node;
 }
