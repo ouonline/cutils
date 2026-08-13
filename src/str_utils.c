@@ -113,7 +113,7 @@ void* memmem(const void* l, unsigned long l_len, const void* s, unsigned long s_
 
     /* special case where s_len == 1 */
     if (s_len == 1) {
-        return memchr(l, (int)*cs, l_len);
+        return memchr((void*)l, (int)*cs, l_len);
     }
 
     /* the last position where its possible to find "s" in "l" */
