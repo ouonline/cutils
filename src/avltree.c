@@ -244,7 +244,7 @@ void avl_delete(struct avl_node* node, struct avl_root* root) {
         struct avl_node* old = node;
         struct avl_node* old_parent = avl_parent(node);
 
-        /* finds predecessor of the deleted node */
+        /* finds successor of the deleted node */
         node = node->right;
         while (node->left) {
             node = node->left;

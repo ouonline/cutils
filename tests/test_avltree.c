@@ -136,6 +136,7 @@ static struct test_data* lookup(struct avl_root* root, int val) {
         output_level_order(root, &res_str);                                          \
         printf("%.*s\n", qbuf_size(&res_str), qbuf_data(&res_str));                  \
         fflush(stdout);                                                              \
+        assert(qbuf_size(&res_str) == strlen(expected_str));                         \
         assert(memcmp(qbuf_data(&res_str), expected_str, qbuf_size(&res_str)) == 0); \
         qbuf_destroy(&res_str);                                                      \
     } while (0)
@@ -214,9 +215,11 @@ static void test_insert_norotate() {
         assert(data != NULL);                                                        \
         printf("***** delete [%d] *****\n", val);                                    \
         avl_delete(&data->node, root);                                               \
+        free(data);                                                                  \
         output_level_order(root, &res_str);                                          \
         printf("%.*s\n", qbuf_size(&res_str), qbuf_data(&res_str));                  \
         fflush(stdout);                                                              \
+        assert(qbuf_size(&res_str) == strlen(expected_str));                         \
         assert(memcmp(expected_str, qbuf_data(&res_str), qbuf_size(&res_str)) == 0); \
         qbuf_destroy(&res_str);                                                      \
     } while (0)

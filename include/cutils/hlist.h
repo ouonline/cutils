@@ -66,7 +66,7 @@ static inline void hlist_del(struct hlist_node* node) {
     for ((p) = (head)->first; (p) && ((n) = (p)->next, 1); (p) = (n))
 
 #define hlist_for_each_from(p, pos, head) \
-    for ((p) = (pos); (p) && ((n) = (p)->next, 1); (p) = (n))
+    for ((p) = (pos); (p); (p) = (p)->next)
 
 #define hlist_for_each_from_safe(p, n, pos, head) \
     for ((p) = (pos); (p) && ((n) = (p)->next, 1); (p) = (n))

@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_INLINE_SIZE sizeof(unsigned long)
-
 void qbuf_init(struct qbuf* q) {
     q->__base__ = NULL;
     q->__size__ = 0;
@@ -16,12 +14,12 @@ void qbuf_destroy(struct qbuf* q) {
     }
 }
 
-int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
+int qbuf_reserve(struct qbuf* q, uint64_t expected_size) {
     if (expected_size <= q->__capacity__) {
         return 0;
     }
 
-    unsigned long real_capacity;
+    uint64_t real_capacity;
     if (q->__capacity__ == 0) {
         real_capacity = 4;
     } else {
@@ -43,7 +41,7 @@ int qbuf_reserve(struct qbuf* q, unsigned long expected_size) {
     return 0;
 }
 
-int qbuf_resize(struct qbuf* q, unsigned long expected_size) {
+int qbuf_resize(struct qbuf* q, uint64_t expected_size) {
     if (qbuf_reserve(q, expected_size) != 0) {
         return -1;
     }
@@ -52,19 +50,34 @@ int qbuf_resize(struct qbuf* q, unsigned long expected_size) {
     return 0;
 }
 
-int qbuf_append(struct qbuf* q, const void* data, unsigned long size) {
-    const unsigned long new_size = q->__size__ + size;
+int qbuf_append(struct qbuf* q, const void* data, uint64_t size) {
+    const uint64_t new_size = q->__size__ + size;
+    uint64_t offset = UINT64_MAX;
+
+    // source data is in [base, base + capacity)
+    if ((uintptr_t)data >= (uintptr_t)(q->__base__) &&
+        (uintptr_t)data < (uintptr_t)(q->__base__) + q->__capacity__) {
+        offset = (uintptr_t)data - (uintptr_t)(q->__base__);
+    }
+
     if (qbuf_reserve(q, new_size) != 0) {
         return -1;
     }
 
-    memcpy((char*)(q->__base__) + q->__size__, data, size);
+    if (offset != UINT64_MAX) {
+        memmove((char*)(q->__base__) + q->__size__,
+                (const char*)(q->__base__) + offset, size);
+    } else {
+        memcpy((char*)(q->__base__) + q->__size__, data, size);
+    }
+
     q->__size__ = new_size;
+
     return 0;
 }
 
 int qbuf_append_c(struct qbuf* q, char c) {
-    const unsigned long new_size = q->__size__ + 1;
+    const uint64_t new_size = q->__size__ + 1;
     if (qbuf_reserve(q, new_size) != 0) {
         return -1;
     }

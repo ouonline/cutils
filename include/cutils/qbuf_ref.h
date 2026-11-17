@@ -1,13 +1,15 @@
 #ifndef __CUTILS_QBUF_REF_H__
 #define __CUTILS_QBUF_REF_H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 struct qbuf_ref {
     void* base;
-    unsigned long size;
+    uint64_t size;
 };
 
 #ifdef __cplusplus

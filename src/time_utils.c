@@ -7,6 +7,7 @@ time_t str2time(const char* str) {
            &tm.tm_mday, &tm.tm_hour, &tm.tm_min, &tm.tm_sec);
     tm.tm_year -= 1900;
     --tm.tm_mon;
+    tm.tm_isdst = -1;
     return mktime(&tm);
 }
 

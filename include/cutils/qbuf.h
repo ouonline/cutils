@@ -1,14 +1,16 @@
 #ifndef __CUTILS_QBUF_H__
 #define __CUTILS_QBUF_H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 struct qbuf { /* DONOT visit fileds directly */
     void* __base__;
-    unsigned long __size__;
-    unsigned long __capacity__;
+    uint64_t __size__;
+    uint64_t __capacity__;
 };
 
 #ifdef __cplusplus
@@ -24,21 +26,21 @@ static inline void qbuf_clear(struct qbuf* q) {
     q->__size__ = 0;
 }
 
-int qbuf_reserve(struct qbuf* q, unsigned long expected_size);
-int qbuf_resize(struct qbuf* q, unsigned long expected_size);
+int qbuf_reserve(struct qbuf* q, uint64_t expected_size);
+int qbuf_resize(struct qbuf* q, uint64_t expected_size);
 
-int qbuf_append(struct qbuf* q, const void* data, unsigned long size);
+int qbuf_append(struct qbuf* q, const void* data, uint64_t size);
 int qbuf_append_c(struct qbuf* q, char c);
 
 static inline void* qbuf_data(const struct qbuf* q) {
     return q->__base__;
 }
 
-static inline unsigned long qbuf_size(const struct qbuf* q) {
+static inline uint64_t qbuf_size(const struct qbuf* q) {
     return q->__size__;
 }
 
-static inline unsigned long qbuf_capacity(const struct qbuf* q) {
+static inline uint64_t qbuf_capacity(const struct qbuf* q) {
     return q->__capacity__;
 }
 
@@ -46,7 +48,7 @@ static inline int qbuf_empty(const struct qbuf* q) {
     return (q->__size__ == 0);
 }
 
-static inline int qbuf_assign(struct qbuf* q, const void* data, unsigned long size) {
+static inline int qbuf_assign(struct qbuf* q, const void* data, uint64_t size) {
     qbuf_clear(q);
     return qbuf_append(q, data, size);
 }
